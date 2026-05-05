@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Book System Project Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#f9f9ff",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#e2dfff",
+                    "on-secondary-fixed-variant": "#444749",
+                    "error": "#ba1a1a",
+                    "surface": "#f9f9ff",
+                    "inverse-primary": "#c3c0ff",
+                    "on-error": "#ffffff",
+                    "inverse-surface": "#263143",
+                    "surface-variant": "#d8e3fb",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#e7eeff",
+                    "outline-variant": "#c7c4d8",
+                    "surface-dim": "#cfdaf2",
+                    "on-tertiary-fixed": "#002113",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#e0e3e5",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#111c2d",
+                    "tertiary": "#005338",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-high": "#dee8ff",
+                    "on-surface-variant": "#464555",
+                    "on-primary-fixed": "#0f0069",
+                    "primary-container": "#4f46e5",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "on-secondary-container": "#626567",
+                    "surface-container-low": "#f0f3ff",
+                    "on-tertiary-container": "#67f4b7",
+                    "secondary-fixed-dim": "#c4c7c9",
+                    "tertiary-container": "#006e4b",
+                    "background": "#f9f9ff",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "on-surface": "#111c2d",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "outline": "#777587",
+                    "secondary-container": "#e0e3e5",
+                    "secondary": "#5c5f61",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "on-secondary-fixed": "#191c1e",
+                    "tertiary-fixed": "#6ffbbe",
+                    "surface-tint": "#4d44e3",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#dad7ff",
+                    "primary": "#3525cd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "4rem",
+                    "xs": "0.5rem",
+                    "meta_panel_width": "320px",
+                    "sidebar_width": "280px",
+                    "max_content_width": "1200px",
+                    "sm": "1rem",
+                    "base": "4px",
+                    "lg": "2.5rem",
+                    "md": "1.5rem"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "caption": ["Inter"],
+                    "body-md": ["Inter"],
+                    "h1": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "h2": ["Manrope"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h1": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.7", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFC;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-line {
+            width: 2px;
+            background-color: #E2E8F0;
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-surface text-primary font-body-md text-body-md border-b border-outline-variant shadow-sm flex justify-between items-center h-16 px-md w-full sticky top-0 z-50">
+<div class="flex items-center gap-md">
+<span class="font-h2 text-h2 font-bold text-primary tracking-tight">Book System</span>
+<div class="hidden md:flex items-center ml-lg gap-md">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Library</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Assets</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container transition-all duration-200 rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container transition-all duration-200 rounded-full">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="ml-sm flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User avatar" data-alt="A professional headshot of a creative director in a bright, modern office studio. The lighting is soft and natural, emphasizing a high-utility and clean aesthetic. The background features blurred architectural elements in soft slate and white tones, matching the corporate modernism style of the application. The individual wears a neutral-toned shirt, conveying a sense of controlled intelligence and expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2BrRFOwLCrOAN78iQK2JRCU9j37VAPiMZN5lVLBKzzPzffTx-oHyfH5NjBmLLmhreAcBihL1_3tpkPckp0G5Logm3o3kclInRI4sYHVWz0Dj0wQIgiK9yLetuBmsDXvUjUuFfmh8ok-qI1xMVf-8Ohy-ec9CjqfQMtrQpaP514pYBluS6mA77FSkKRrcXJdD_hP_p1y9t0IMkuemTwmcoQ7oeamtL7OiZDC1apO8piQGwoRrSPhJD13u72R3FD6-wzGeIEFYYC3s"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-lowest text-primary border-r border-outline-variant flex flex-col gap-xs p-sm w-sidebar_width h-[calc(100vh-64px)] sticky top-16 hidden md:flex">
+<div class="px-4 py-md">
+<h3 class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Main Menu</h3>
+<p class="text-caption text-secondary">Content Engine</p>
+</div>
+<a class="flex items-center gap-3 bg-primary-fixed text-on-primary-fixed rounded-lg px-4 py-3 font-bold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container-low px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-label-md text-label-md">Projects</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container-low px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="font-label-md text-label-md">Sources</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container-low px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Glossary</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container-low px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<div class="mt-auto p-4">
+<button class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Project
+                </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 p-md md:p-lg max-w-max_content_width mx-auto">
+<!-- Welcome Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-lg gap-md">
+<div>
+<h1 class="font-h1 text-h1 text-on-background">Welcome back, Editor</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage your book generation pipeline and track AI synthesis metrics.</p>
+</div>
+<button class="bg-primary text-on-primary font-bold px-6 py-3 rounded-lg shadow-sm flex items-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                    New Project
+                </button>
+</div>
+<!-- Stats Overview - Bento Style -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-[0px_4px_20px_rgba(30,41,59,0.05)]">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 bg-primary-fixed rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">auto_stories</span>
+</div>
+<span class="text-caption text-secondary font-medium">+12% from last month</span>
+</div>
+<p class="text-caption text-secondary uppercase tracking-wider font-bold">Active Books</p>
+<h2 class="font-h1 text-h1 mt-1">24</h2>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-[0px_4px_20px_rgba(30,41,59,0.05)]">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<span class="text-caption text-secondary font-medium">842k total words</span>
+</div>
+<p class="text-caption text-secondary uppercase tracking-wider font-bold">Words Processed</p>
+<h2 class="font-h1 text-h1 mt-1">128.4k</h2>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-[0px_4px_20px_rgba(30,41,59,0.05)]">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 bg-tertiary-fixed rounded-lg flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">high_quality</span>
+</div>
+<span class="text-caption text-secondary font-medium">Industry standard: 8.5</span>
+</div>
+<p class="text-caption text-secondary uppercase tracking-wider font-bold">Avg Quality Score</p>
+<h2 class="font-h1 text-h1 mt-1">9.2</h2>
+</div>
+</div>
+<!-- Recent Projects Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_4px_20px_rgba(30,41,59,0.05)] overflow-hidden">
+<div class="px-md py-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-h2 text-h2 text-on-surface">Recent Projects</h3>
+<div class="flex items-center gap-xs">
+<button class="p-2 hover:bg-surface-container transition-colors rounded-lg">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 hover:bg-surface-container transition-colors rounded-lg">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest">
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Book Title</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Source</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Pipeline Progress</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Validation</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Last Modified</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-12 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary opacity-40">menu_book</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">The Neural Shift</p>
+<p class="text-caption text-secondary">AI Ethics &amp; Future</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant text-caption rounded-lg border border-outline-variant">Transcript</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-4">
+<div class="flex-1 h-2 bg-secondary-container rounded-full overflow-hidden max-w-[140px]">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[75%] rounded-full"></div>
+</div>
+<span class="text-caption font-bold text-primary">Expansion</span>
+</div>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-md text-label-md text-tertiary">94.2</span>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-caption text-on-surface-variant">2 hours ago</p>
+</td>
+<td class="px-md py-4 text-right">
+<button class="text-primary font-bold font-label-md text-label-md hover:bg-primary-fixed px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                        Open Editor <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-12 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary opacity-40">menu_book</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Digital Renaissance</p>
+<p class="text-caption text-secondary">Creative Tech</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant text-caption rounded-lg border border-outline-variant">Document</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-4">
+<div class="flex-1 h-2 bg-secondary-container rounded-full overflow-hidden max-w-[140px]">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[40%] rounded-full"></div>
+</div>
+<span class="text-caption font-bold text-primary">Structure</span>
+</div>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span>
+<span class="font-label-md text-label-md">Pending</span>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-caption text-on-surface-variant">Yesterday</p>
+</td>
+<td class="px-md py-4 text-right">
+<button class="text-primary font-bold font-label-md text-label-md hover:bg-primary-fixed px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                        Open Editor <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Pipeline Visual Section -->
+<div class="mt-xl grid grid-cols-1 lg:grid-cols-4 gap-md">
+<div class="lg:col-span-1">
+<h3 class="font-h2 text-h2 mb-2">Global Pipeline</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Current average throughput across all active projects.</p>
+<div class="mt-md p-4 bg-primary-fixed text-on-primary-fixed rounded-xl border border-primary-container/20">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined">info</span>
+<p class="font-bold font-label-md text-label-md">Efficiency Tip</p>
+</div>
+<p class="text-caption">The 'Expansion' phase is currently 14% slower than last week. Consider reviewing prompt templates.</p>
+</div>
+</div>
+<div class="lg:col-span-3 bg-surface-container-lowest border border-outline-variant p-md rounded-xl shadow-sm">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md">
+<!-- Stage 1 -->
+<div class="flex-1 flex flex-col items-center text-center">
+<div class="w-12 h-12 bg-tertiary rounded-full flex items-center justify-center text-on-tertiary mb-3">
+<span class="material-symbols-outlined">download_done</span>
+</div>
+<p class="font-bold font-label-md text-label-md">Intake</p>
+<p class="text-caption text-tertiary">100% Complete</p>
+</div>
+<div class="hidden md:block w-12 h-px bg-outline-variant"></div>
+<!-- Stage 2 -->
+<div class="flex-1 flex flex-col items-center text-center">
+<div class="w-12 h-12 bg-tertiary rounded-full flex items-center justify-center text-on-tertiary mb-3">
+<span class="material-symbols-outlined">account_tree</span>
+</div>
+<p class="font-bold font-label-md text-label-md">Structure</p>
+<p class="text-caption text-tertiary">100% Complete</p>
+</div>
+<div class="hidden md:block w-12 h-px bg-outline-variant"></div>
+<!-- Stage 3 -->
+<div class="flex-1 flex flex-col items-center text-center">
+<div class="w-12 h-12 border-2 border-primary rounded-full flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined">edit_note</span>
+</div>
+<p class="font-bold font-label-md text-label-md">Expansion</p>
+<p class="text-caption text-primary">60% Active</p>
+</div>
+<div class="hidden md:block w-12 h-px bg-outline-variant"></div>
+<!-- Stage 4 -->
+<div class="flex-1 flex flex-col items-center text-center">
+<div class="w-12 h-12 bg-secondary-container border border-outline-variant rounded-full flex items-center justify-center text-secondary mb-3">
+<span class="material-symbols-outlined">image</span>
+</div>
+<p class="font-bold font-label-md text-label-md text-secondary">Visuals</p>
+<p class="text-caption text-secondary">Pending</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Side Panel: AI Insights -->
+<aside class="bg-surface-container-low text-primary border-l border-outline-variant flex flex-col w-meta_panel_width h-[calc(100vh-64px)] p-md sticky top-16 hidden xl:flex overflow-y-auto">
+<div class="mb-md">
+<h3 class="font-h2 text-h2 text-on-surface">AI Insights</h3>
+<p class="text-caption text-on-surface-variant">Real-time validation engine</p>
+</div>
+<div class="space-y-md">
+<!-- Content Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+<h4 class="font-label-md text-label-md font-bold">Model Performance</h4>
+</div>
+<p class="text-caption text-on-surface-variant mb-4">GPT-4o output consistency is higher for creative non-fiction today (+4.2%).</p>
+<div class="h-1 bg-secondary-container rounded-full">
+<div class="h-full bg-primary w-[88%] rounded-full"></div>
+</div>
+</div>
+<!-- Content Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">dictionary</span>
+<h4 class="font-label-md text-label-md font-bold">Glossary Updates</h4>
+</div>
+<ul class="text-caption text-on-surface-variant space-y-2">
+<li class="flex items-start gap-2">
+<span class="w-1 h-1 bg-primary rounded-full mt-1.5 flex-shrink-0"></span>
+<span>Added 12 new terms to 'Neural' project</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="w-1 h-1 bg-primary rounded-full mt-1.5 flex-shrink-0"></span>
+<span>Conflict detected in 'Renaissance' taxonomy</span>
+</li>
+</ul>
+</div>
+<!-- Visual Callout -->
+<div class="bg-[#EEF2FF] border-l-4 border-primary p-4 rounded-r-xl">
+<div class="flex items-center gap-2 mb-2 text-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+<p class="font-bold font-label-md text-label-md">Pro Tip</p>
+</div>
+<p class="text-caption text-primary">Use the 'Multi-Vector' synthesis for faster expansions in the technical chapter block.</p>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant pt-md text-center">
+<img class="rounded-xl w-full h-32 object-cover mb-4" data-alt="A clean, abstract 3D visualization of neural networking nodes connecting in a bright, airy digital space. The nodes are glowing spheres of indigo and violet, set against a pristine white background with soft, diffused shadows. The image conveys a sense of controlled intelligence and efficient data flow, perfectly matching the AI-native corporate modernism aesthetic of the book management platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2AvMShBD5pCGuNrLuvpKb0dMXfpyev7L-aV6QkUwpsowBCO_foEEAn27CrhxqHxDI8dA2yN9A_cPOGXTwTrL0zK2wegRfxR8L0BCx7BXAhXF-5uZpyI7ObqLuktP1sbrlaSs4UWn2d3KFrii1fdfIgH3rea06oLUcgYOvXLazKjliFcgFfXCjoCll1M-p_WXtPb70HjOQGccwYVseSBI-Prcy_b1q-nDgcdWQHjVrNXk8dYIJQEMCsGs7tjyRvkTMEkav2nuLDMw"/>
+<p class="text-caption text-on-surface-variant">Version 4.2.0 • Stable</p>
+</div>
+</aside>
+</div>
+</body></html>
