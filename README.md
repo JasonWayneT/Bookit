@@ -1,140 +1,68 @@
-# BMAD to Spec Driven Development Template
+# Bookit — Book System
 
-This template turns BMAD planning outputs into a repeatable Spec Driven Development workflow for AI coding agents.
+> An AI pipeline that transforms raw expert content (transcripts, notes, discussions) into structured, beginner-accessible digital books formatted as visual reports.
 
-It is designed for projects where requirements, specs, tasks, code, tests, and later changes must stay traceable to durable requirement IDs. It also supports lightweight projects where you only want a small functional spec and a short task list.
+---
 
-## Sources and design influences
+## What This Is
 
-- Kiro's public spec documentation describes a three-phase workflow of requirements or bug analysis, design, and implementation tasks, with `requirements.md` or `bugfix.md`, `design.md`, and `tasks.md` as the core files: https://kiro.dev/docs/specs/
-- BMAD's public agent documentation shows a workflow-oriented model where analyst, product manager, architect, developer, UX designer, and technical writer agents produce and validate artifacts such as PRDs, epics, stories, architecture, UX design, and dev stories: https://docs.bmad-method.org/reference/agents/
-- DeepLearning.AI's public course page frames spec-driven development for coding agents around a project constitution, feature specs, plan-implement-verify loops, and context preservation across agent sessions: https://www.deeplearning.ai/short-courses/spec-driven-development-with-coding-agents/
+Subject matter experts produce valuable content in formats that are inaccessible to beginners — meeting transcripts, fragmentary notes, verbal explanations that assume existing knowledge. Bookit is an AI-first pipeline that takes that raw material and produces publication-ready digital books with clear structure, beginner scaffolding, visual diagrams, and validated pedagogy.
 
-## What this package gives you
+**What this is not:**
+- A word processor or manual writing tool — the pipeline does the heavy lifting
+- A fiction writing system — designed for non-fiction, educational, and expert content only
+- A finished product — currently in prototype/design phase with no public release
 
-- A project-level documentation structure that coding agents must update before touching code.
-- A flexible requirement ID scheme that supports functional, non-functional, design, UX, architecture, data, security, test, bug, and decision records without forcing all categories on every project.
-- A BMAD intake process that normalizes PRDs, epics, stories, UX outputs, architecture docs, and dev stories into downstream implementation specs.
-- A change workflow for new features, bug fixes, refactors, design updates, and rebuild-from-scratch scenarios.
-- Copy-pasteable repo instruction files for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `CURSOR.md`, or similar AI coding environments.
-- An optional Agent Skill in `skill/spec-driven-bmad/SKILL.md`.
+---
 
-## Recommended repo structure
+## Status
 
-```text
-docs/
-  spec/
-    00-project-constitution.md
-    01-bmad-intake.md
-    02-requirements-registry.md
-    03-feature-specs/
-      FEAT-001-example.md
-    04-design-specs/
-      DESIGN-001-example.md
-    05-change-requests/
-      CR-001-example.md
-    06-traceability/
-      traceability-matrix.md
-    07-decisions/
-      ADR-001-example.md
-    08-test-specs/
-      TEST-001-example.md
-    09-known-issues/
-      BUG-001-example.md
-AGENTS.md
-```
+| Field | Value |
+|---|---|
+| **Phase** | Prototype |
+| **Stability** | Design-stage — no public release |
+| **Last updated** | May 2026 |
 
-For small projects, use only:
+---
 
-```text
-docs/spec/00-project-constitution.md
-docs/spec/02-requirements-registry.md
-docs/spec/03-feature-specs/FEAT-001.md
-docs/spec/06-traceability/traceability-matrix.md
-AGENTS.md
-```
+## How It Works
 
-## Operating principle
+1. **Ingest** — raw content in (transcripts, notes, slides, expert discussions)
+2. **Classify & structure** — AI identifies topics, headings, and content hierarchy
+3. **Expand** — explanations rewritten for beginners; assumed knowledge surfaced and defined
+4. **Enrich** — visual elements (diagrams, callouts, charts) generated from content
+5. **Validate** — pedagogy rules and quality checklists run against output
+6. **Output** — publication-ready vertical visual report
 
-No agent may implement a code change until it can answer:
+---
 
-1. Which requirement IDs justify this change?
-2. Which spec files changed or were reviewed?
-3. Which acceptance criteria prove the change is correct?
-4. Which tests map to those acceptance criteria?
-5. Which known bugs, constraints, or decisions must not be reintroduced?
+## What's In This Repo
 
-If the answer is unclear, the agent must update the documentation first or ask for clarification.
+This repo contains the content architecture and production specifications:
 
-## Lightweight, standard, and rigorous modes
+| File | Purpose |
+|---|---|
+| `BOOK_ARCHITECTURE.md` | Overall book structure and hierarchy rules |
+| `BOOK_STYLE_MANIFEST.md` | Writing style and tone guidelines |
+| `BOOK_TAXONOMY.md` | Content categorization and tagging system |
+| `CHAPTER_TEMPLATE.md` | Template for individual chapter structure |
+| `CONTENT_MODELS.md` | Data models for different content types |
+| `PEDAGOGY_RULES.md` | Teaching principles applied to content |
+| `TRANSFORMATION_RULES.md` | Rules for converting raw input to structured output |
+| `VALIDATION_CHECKLISTS.md` | Quality gates before publication |
+| `VISUAL_CONTENT_MODEL.md` | Structure for diagrams, callouts, and visual elements |
+| `VOCABULARY_AND_GLOSSARY_MODEL.md` | Terminology management and glossary generation |
+| `product-brief.md` | Full product brief and requirements |
+| `prd.md` | Product Requirements Document |
 
-### Lightweight mode
+---
 
-Use this for prototypes, scripts, calculators, demos, or very small apps.
+## How This Was Built
 
-Required files:
+The architecture was defined before any code. Product brief and PRD were written first to clarify the scope and constraints, then content models and transformation rules were designed to govern how the AI pipeline would behave. The spec-first approach matters here because the output quality depends on the rules being precise — vague rules produce vague books.
 
-- `00-project-constitution.md`
-- `02-requirements-registry.md`
-- One feature spec
-- `traceability-matrix.md`
-- `AGENTS.md`
+---
 
-Minimum IDs:
+## License
 
-- `FR-*` for functional requirements
-- `AC-*` for acceptance criteria
-- `TASK-*` for implementation tasks
-- `TEST-*` for tests
-
-### Standard mode
-
-Use this for normal production apps.
-
-Add:
-
-- `01-bmad-intake.md`
-- Design specs
-- Change requests
-- ADRs
-- Known issues
-
-Recommended IDs:
-
-- `FR-*`, `NFR-*`, `UX-*`, `DES-*`, `ARCH-*`, `DATA-*`, `SEC-*`, `AC-*`, `TASK-*`, `TEST-*`, `BUG-*`, `ADR-*`
-
-### Rigorous mode
-
-Use this for enterprise, regulated, mission-critical, multi-agent, or long-lived projects.
-
-Add:
-
-- Requirement status lifecycle
-- Explicit owners
-- Risk classification
-- Compliance and security mappings
-- Release gates
-- Full bidirectional traceability
-
-## First setup checklist
-
-1. Copy the relevant templates from `templates/` into your repo.
-2. Rename `templates/AGENTS.md` to `AGENTS.md`, then duplicate it to `CLAUDE.md`, `GEMINI.md`, or other agent instruction files as needed.
-3. Paste BMAD outputs into `docs/spec/01-bmad-intake.md`.
-4. Normalize BMAD artifacts into `02-requirements-registry.md`.
-5. Create the first feature spec under `03-feature-specs/`.
-6. Build or update the traceability matrix.
-7. Only then ask an agent to scaffold or change code.
-
-## Change request rule
-
-Every change starts with a change request. Even if you ask an agent informally, the agent must convert the request into:
-
-- A proposed requirement/spec update.
-- A list of impacted files.
-- A traceability update.
-- An implementation task plan.
-- A verification plan.
-
-Only after those are consistent may the agent modify code.
-
+Private
