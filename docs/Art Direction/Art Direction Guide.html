@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Direction Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ── RESET & BASE ───────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --paper:   #f7f4ef;   /* warm off-white, like book stock */
+  --white:   #ffffff;
+  --ink:     #1a1a24;   /* near-black text */
+  --ink-2:   #4b5060;   /* secondary text */
+  --ink-3:   #9ca3af;   /* muted / captions */
+  --border:  #e2ddd6;
+
+  --c1:      #005CE6;   /* Section 01 — electric blue */
+  --c2:      #E03C31;   /* Section 02 — bold red */
+  --c3:      #F59E0B;   /* Section 03 — amber */
+  --teal:    #009688;   /* Synthesis — Strategyzer teal */
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+/* ── HERO ───────────────────────────────────────────── */
+.hero {
+  background: var(--ink);
+  color: #fff;
+  padding: 5rem 3rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bold decorative number behind the headline */
+.hero-bg-num {
+  position: absolute;
+  right: -2rem;
+  bottom: -4rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28rem;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(255,255,255,0.03);
+  user-select: none;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+}
+
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.hero h1 span { color: var(--teal); }
+
+.hero-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 700px) {
+  .hero-cols { grid-template-columns: 1fr; }
+}
+
+.hero-col-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.25rem;
+}
+
+.hero-col h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #fff;
+}
+
+.hero-col p {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+/* ── CHAPTER BANDS ──────────────────────────────────── */
+.chapter-band {
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.band-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(5rem, 14vw, 10rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: rgba(255,255,255,0.18);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.band-text { color: #fff; }
+
+.band-text h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.band-text p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+/* ── SECTION CONTENT ────────────────────────────────── */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 3rem;
+}
+
+.section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ink-3);
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── IMAGE GRID ─────────────────────────────────────── */
+.img-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 3.5rem;
+}
+
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g2 { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 680px) {
+  .g3, .g2 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 440px) {
+  .g3, .g2 { grid-template-columns: 1fr; }
+}
+
+.img-card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e9e5de;
+  aspect-ratio: 16/9;
+  border: 1px solid var(--border);
+}
+
+.img-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.img-card:hover img { transform: scale(1.04); }
+
+.img-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(26,26,36,0.72);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+}
+
+/* ── COLOR PALETTE ──────────────────────────────────── */
+.palette-block {
+  margin-bottom: 3.5rem;
+}
+
+.palette-block-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1rem;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.swatch {
+  flex: 1 1 60px;
+  height: 80px;
+  position: relative;
+  min-width: 48px;
+  cursor: default;
+  transition: flex 0.2s ease;
+}
+
+.swatch:hover { flex: 2; }
+
+.swatch-hex {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.15s;
+  padding: 0 0.25rem;
+}
+
+.swatch:hover .swatch-hex { opacity: 1; }
+
+/* ── PRINCIPLE CARDS ────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 3.5rem;
+}
+
+.card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-top: 3px solid transparent;
+  transition: background 0.2s;
+}
+
+.card:hover { background: #fdfcfb; }
+
+.card-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+  opacity: 0.12;
+  letter-spacing: -0.04em;
+}
+
+.card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--ink);
+}
+
+.card p {
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+/* ── SYNTHESIS ──────────────────────────────────────── */
+.synthesis-band {
+  background: var(--teal);
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.syn-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.synthesis-band h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.synthesis-band p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  max-width: 480px;
+}
+
+.syn-cards {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 680px) {
+  .syn-cards { grid-template-columns: 1fr; padding: 0 1.5rem; }
+}
+
+.syn-card {
+  background: var(--white);
+  padding: 1.5rem;
+  border-top: 4px solid;
+}
+
+.syn-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.syn-card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--ink);
+}
+
+.syn-card p {
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+/* ── UNIFIED PALETTE STRIP ──────────────────────────── */
+.palette-strip {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem;
+}
+
+.palette-strip-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.25rem;
+}
+
+.strip {
+  display: flex;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+
+.strip-col {
+  flex: 1;
+  position: relative;
+  transition: flex 0.2s ease;
+  cursor: default;
+}
+
+.strip-col:hover { flex: 3; }
+
+.strip-name {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.strip-col:hover .strip-name { opacity: 1; }
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+footer a {
+  color: var(--ink-3);
+  text-decoration: none;
+}
+
+footer a:hover { color: var(--ink); }
+
+/* ── PRINT ──────────────────────────────────────────── */
+@media print {
+  .chapter-band, .synthesis-band { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .img-card { break-inside: avoid; }
+  .cards, .syn-cards { break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ HERO -->
+<header class="hero">
+  <div class="hero-bg-num">A</div>
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Visual Art Direction Guide</span>
+    <h1>Art<br><span>Direction</span></h1>
+
+    <div class="hero-cols">
+      <div class="hero-col">
+        <div class="hero-col-num" style="color:var(--c1)">01</div>
+        <h3>Dark Atmospheric</h3>
+        <p>Bioluminescent glow on deep-space grounds. Flat silhouette characters.</p>
+      </div>
+      <div class="hero-col">
+        <div class="hero-col-num" style="color:var(--c2)">02</div>
+        <h3>Vivid Flat &amp; Motion</h3>
+        <p>Saturated color-field panels. Rounded, accessible illustration language.</p>
+      </div>
+      <div class="hero-col">
+        <div class="hero-col-num" style="color:var(--c3)">03</div>
+        <h3>Anime Action &amp; Urban</h3>
+        <p>High-detail character art fused with bold graphic street energy.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═════════════════════════════════════ CHAPTER BAND 01 -->
+<div class="chapter-band" style="background:var(--c1)" id="s1">
+  <div class="band-num">01</div>
+  <div class="band-text">
+    <h2>Dark Atmospheric</h2>
+    <p>Bioluminescent glows on near-black grounds. Selective light as the primary design tool. Flat silhouettes whose posture carries all expression.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label" style="color:var(--c1)">Visual References</div>
+
+  <div class="img-grid g3">
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 110002.png" alt="">
+      <div class="img-caption">Cosmic silhouette</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 110008.png" alt="">
+      <div class="img-caption">Circuit glow field</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 110011.png" alt="">
+      <div class="img-caption">Character at scale</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 110022.png" alt="">
+      <div class="img-caption">Neon object language</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 110026.png" alt="">
+      <div class="img-caption">Geometric icon close-up</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 112921.png" alt="">
+      <div class="img-caption">Neural circuit map</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c1)">Color Palette</div>
+
+  <div class="palette-block">
+    <div class="swatches">
+      <div class="swatch" style="background:#060b1f"><span class="swatch-hex" style="color:rgba(255,255,255,0.6)">#060b1f</span></div>
+      <div class="swatch" style="background:#091433"><span class="swatch-hex" style="color:rgba(255,255,255,0.6)">#091433</span></div>
+      <div class="swatch" style="background:#0d2a5c"><span class="swatch-hex" style="color:rgba(255,255,255,0.6)">#0d2a5c</span></div>
+      <div class="swatch" style="background:#005CE6"><span class="swatch-hex" style="color:#fff">#005CE6</span></div>
+      <div class="swatch" style="background:#00c8ff"><span class="swatch-hex" style="color:#002030">#00c8ff</span></div>
+      <div class="swatch" style="background:#06ffd6"><span class="swatch-hex" style="color:#003028">#06ffd6</span></div>
+      <div class="swatch" style="background:#7b44ff"><span class="swatch-hex" style="color:#fff">#7b44ff</span></div>
+      <div class="swatch" style="background:#d966ff"><span class="swatch-hex" style="color:#2a0040">#d966ff</span></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c1)">Design Principles</div>
+
+  <div class="cards">
+    <div class="card" style="border-top-color:var(--c1)">
+      <div class="card-num" style="color:var(--c1)">1</div>
+      <h4>Deep Dark Grounds</h4>
+      <p>Near-black navy (2–8% lightness) anchors every scene. Darkness is the canvas, not the absence of design.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c1)">
+      <div class="card-num" style="color:var(--c1)">2</div>
+      <h4>Selective Luminosity</h4>
+      <p>Only key focal elements glow. Everything else stays dark. Restraint amplifies impact — one glowing point beats ten.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c1)">
+      <div class="card-num" style="color:var(--c1)">3</div>
+      <h4>Flat Silhouette Forms</h4>
+      <p>Characters are clean flat shapes. Posture, scale, and contrast carry all expression — no surface detail needed.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c1)">
+      <div class="card-num" style="color:var(--c1)">4</div>
+      <h4>Geometric + Organic</h4>
+      <p>Hard circuit geometry coexists with soft organic curves. The tension between the two creates visual energy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════ CHAPTER BAND 02 -->
+<div class="chapter-band" style="background:var(--c2)" id="s2">
+  <div class="band-num">02</div>
+  <div class="band-text">
+    <h2>Vivid Flat &amp; Motion</h2>
+    <p>Saturated color-field panels, rounded character forms, and the high-energy informational illustration language of modern motion graphics.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label" style="color:var(--c2)">Visual References</div>
+
+  <div class="img-grid g3">
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113005.png" alt="">
+      <div class="img-caption">Emotional UI language</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113018.png" alt="">
+      <div class="img-caption">Character diversity</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113024.png" alt="">
+      <div class="img-caption">Global scale object</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113034.png" alt="">
+      <div class="img-caption">Bold color panels</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113042.png" alt="">
+      <div class="img-caption">Conceptual evolution</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113138.png" alt="">
+      <div class="img-caption">Circular composition</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113141.png" alt="">
+      <div class="img-caption">Data visualization</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113149.png" alt="">
+      <div class="img-caption">Timeline infographic</div>
+    </div>
+    <div class="img-card">
+      <img src="Screenshot 2026-05-06 113153.png" alt="">
+      <div class="img-caption">Panel grid layout</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c2)">Color Palette</div>
+
+  <div class="palette-block">
+    <div class="swatches">
+      <div class="swatch" style="background:#E03C31"><span class="swatch-hex" style="color:#fff">#E03C31</span></div>
+      <div class="swatch" style="background:#FF7043"><span class="swatch-hex" style="color:#fff">#FF7043</span></div>
+      <div class="swatch" style="background:#FFCA28"><span class="swatch-hex" style="color:#2a1800">#FFCA28</span></div>
+      <div class="swatch" style="background:#66BB6A"><span class="swatch-hex" style="color:#003008">#66BB6A</span></div>
+      <div class="swatch" style="background:#29B6F6"><span class="swatch-hex" style="color:#001a28">#29B6F6</span></div>
+      <div class="swatch" style="background:#EF5350"><span class="swatch-hex" style="color:#fff">#EF5350</span></div>
+      <div class="swatch" style="background:#f5f5f5"><span class="swatch-hex" style="color:#444">#f5f5f5</span></div>
+      <div class="swatch" style="background:#212121"><span class="swatch-hex" style="color:rgba(255,255,255,0.6)">#212121</span></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c2)">Design Principles</div>
+
+  <div class="cards">
+    <div class="card" style="border-top-color:var(--c2)">
+      <div class="card-num" style="color:var(--c2)">1</div>
+      <h4>Flat Color Blocks</h4>
+      <p>Large areas of pure, saturated color with no internal gradients. The contrast between color fields does all structural work.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c2)">
+      <div class="card-num" style="color:var(--c2)">2</div>
+      <h4>Rounded Everything</h4>
+      <p>Generous radii on all shapes and characters. Soft geometry reads as approachable, playful, and universally accessible.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c2)">
+      <div class="card-num" style="color:var(--c2)">3</div>
+      <h4>Conceptual Scale</h4>
+      <p>Objects sized by narrative importance, not physical reality. A single idea can visually dwarf a galaxy.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c2)">
+      <div class="card-num" style="color:var(--c2)">4</div>
+      <h4>Panel Rhythm</h4>
+      <p>Diagonal splits, circles, and color-field panels create strong compositional rhythm without complex layout grids.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════ CHAPTER BAND 03 -->
+<div class="chapter-band" style="background:var(--c3)" id="s3">
+  <div class="band-num">03</div>
+  <div class="band-text">
+    <h2>Anime Action &amp; Urban</h2>
+    <p>High-detail anime character art fused with bold graphic street energy. Fantasy costume meets urban streetwear. Dynamic, kinetic, cinematic.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label" style="color:var(--c3)">Visual References</div>
+
+  <div class="img-grid g2">
+    <div class="img-card">
+      <img src="ZZZ-review-header.webp" alt="">
+      <div class="img-caption">Zenless Zone Zero — urban ensemble</div>
+    </div>
+    <div class="img-card">
+      <img src="Zenless-Zone-Zero-imag.webp" alt="">
+      <div class="img-caption">ZZZ — type as graphic element</div>
+    </div>
+    <div class="img-card">
+      <img src="QgTfrTmCYDpBcCKmhmyzQA.jpg" alt="">
+      <div class="img-caption">ZZZ — cinematic street level</div>
+    </div>
+    <div class="img-card">
+      <img src="GI_CharacterGroup.webp" alt="">
+      <div class="img-caption">Genshin Impact — character roster UI</div>
+    </div>
+    <div class="img-card">
+      <img src="Genshin-Impact-dash.jpg" alt="">
+      <div class="img-caption">Genshin Impact — open world</div>
+    </div>
+    <div class="img-card">
+      <img src="MV5BN2E5NjNiYTEtZWFjZS00M2U5LWE3NzktZTNmMWFiMTc1Y2RjXkEyXkFqcGc@._V1_.jpg" alt="" style="object-position:top">
+      <div class="img-caption">TWEWY — urban graphic energy</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c3)">Color Palette</div>
+
+  <div class="palette-block">
+    <div class="swatches">
+      <div class="swatch" style="background:#0b1120"><span class="swatch-hex" style="color:rgba(255,255,255,0.55)">#0b1120</span></div>
+      <div class="swatch" style="background:#1a2744"><span class="swatch-hex" style="color:rgba(255,255,255,0.55)">#1a2744</span></div>
+      <div class="swatch" style="background:#c8a84b"><span class="swatch-hex" style="color:#1a0e00">#c8a84b</span></div>
+      <div class="swatch" style="background:#F59E0B"><span class="swatch-hex" style="color:#1a0e00">#F59E0B</span></div>
+      <div class="swatch" style="background:#ff3366"><span class="swatch-hex" style="color:#fff">#ff3366</span></div>
+      <div class="swatch" style="background:#00e676"><span class="swatch-hex" style="color:#002010">#00e676</span></div>
+      <div class="swatch" style="background:#ff6600"><span class="swatch-hex" style="color:#fff">#ff6600</span></div>
+      <div class="swatch" style="background:#a855f7"><span class="swatch-hex" style="color:#fff">#a855f7</span></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="color:var(--c3)">Design Principles</div>
+
+  <div class="cards">
+    <div class="card" style="border-top-color:var(--c3)">
+      <div class="card-num" style="color:var(--c3)">1</div>
+      <h4>Dynamic Posing</h4>
+      <p>Characters are always mid-action or mid-attitude. Static standing poses are reserved for UI roster screens only.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c3)">
+      <div class="card-num" style="color:var(--c3)">2</div>
+      <h4>Elemental Identity</h4>
+      <p>Each character owns a signature color doubling as their elemental or faction identity — consistent across UI and world.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c3)">
+      <div class="card-num" style="color:var(--c3)">3</div>
+      <h4>Type as Composition</h4>
+      <p>Display type acts as a visual element — overlapping characters, extreme scale, bold weight. Text and art are inseparable.</p>
+    </div>
+    <div class="card" style="border-top-color:var(--c3)">
+      <div class="card-num" style="color:var(--c3)">4</div>
+      <h4>Cinematic Depth</h4>
+      <p>Extreme foreground/background scale contrast creates cinematic depth without complex 3D environments.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ SYNTHESIS -->
+<div class="synthesis-band">
+  <div class="syn-inner">
+    <h2>Synthesis</h2>
+    <p>How the three directions layer into one unified visual system.</p>
+  </div>
+</div>
+
+<div class="syn-cards">
+  <div class="syn-card" style="border-top-color:var(--c1)">
+    <span class="syn-label" style="color:var(--c1)">From Style 01</span>
+    <h4>Environment &amp; Atmosphere</h4>
+    <p>Dark near-black grounds with selective glow for dramatic environmental staging. Light is earned, not assumed.</p>
+  </div>
+  <div class="syn-card" style="border-top-color:var(--c2)">
+    <span class="syn-label" style="color:var(--c2)">From Style 02</span>
+    <h4>UI &amp; Information Design</h4>
+    <p>Flat color panels, rounded components, and bold visual hierarchy for all interface and data communication.</p>
+  </div>
+  <div class="syn-card" style="border-top-color:var(--c3)">
+    <span class="syn-label" style="color:var(--c3)">From Style 03</span>
+    <h4>Character &amp; Identity</h4>
+    <p>Detailed anime character art with signature elemental color coding, dynamic posing, and cinematic composition.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ UNIFIED PALETTE -->
+<div class="palette-strip">
+  <div class="palette-strip-label">Unified System Palette</div>
+  <div class="strip">
+    <div class="strip-col" style="background:#060b1f"><span class="strip-name" style="color:rgba(255,255,255,0.6)">Ground</span></div>
+    <div class="strip-col" style="background:#1a1a24"><span class="strip-name" style="color:rgba(255,255,255,0.6)">Ink</span></div>
+    <div class="strip-col" style="background:#005CE6"><span class="strip-name" style="color:#fff">Blue</span></div>
+    <div class="strip-col" style="background:#00c8ff"><span class="strip-name" style="color:#002030">Cyan</span></div>
+    <div class="strip-col" style="background:#7b44ff"><span class="strip-name" style="color:#fff">Purple</span></div>
+    <div class="strip-col" style="background:#E03C31"><span class="strip-name" style="color:#fff">Red</span></div>
+    <div class="strip-col" style="background:#FF7043"><span class="strip-name" style="color:#fff">Coral</span></div>
+    <div class="strip-col" style="background:#F59E0B"><span class="strip-name" style="color:#1a0e00">Amber</span></div>
+    <div class="strip-col" style="background:#66BB6A"><span class="strip-name" style="color:#003008">Green</span></div>
+    <div class="strip-col" style="background:#009688"><span class="strip-name" style="color:#fff">Teal</span></div>
+    <div class="strip-col" style="background:#f7f4ef;border:1px solid #e2ddd6"><span class="strip-name" style="color:#444">Paper</span></div>
+  </div>
+</div>
+
+<footer>
+  <span>Art Direction Guide &nbsp;·&nbsp; 2026</span>
+  <a href="#top">↑ Back to top</a>
+</footer>
+
+</body>
+</html>

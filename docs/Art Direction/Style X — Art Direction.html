@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style X — Bookit Art Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:   #f7f4ef;
+  --white:   #ffffff;
+  --ink:     #1a1a24;
+  --ink-2:   #4b5060;
+  --ink-3:   #9ca3af;
+  --border:  #e2ddd6;
+  --dark:    #0a0d18;
+  --dark-2:  #111827;
+  --indigo:  #3525CD;
+  --blue:    #005CE6;
+  --cyan:    #00BCD4;
+  --red:     #E03C31;
+  --amber:   #F59E0B;
+  --green:   #43A047;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; line-height: 1.65; }
+
+/* ── COVER ─────────────────────────────────────────── */
+.cover {
+  background: var(--dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.cover-glow {
+  position: absolute; top: -120px; left: -120px;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(53,37,205,0.25) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cover-glow-2 {
+  position: absolute; bottom: -80px; right: 20%;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,188,212,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cover-bg-x {
+  position: absolute; right: -8vw; top: 50%; transform: translateY(-50%);
+  font-family: 'Space Grotesk', sans-serif; font-size: 60vw; font-weight: 800;
+  line-height: 1; color: rgba(255,255,255,0.025); letter-spacing: -0.06em;
+  user-select: none; pointer-events: none;
+}
+.cover-eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(0,188,212,0.8); margin-bottom: 1.25rem;
+  position: relative;
+}
+.cover h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(6rem, 20vw, 16rem);
+  font-weight: 800; line-height: 0.88; letter-spacing: -0.055em;
+  color: #fff; position: relative; margin-bottom: 2.5rem;
+}
+.cover-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+}
+.cover-footer-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.55); }
+.cover-footer-sub { font-size: 0.72rem; color: rgba(255,255,255,0.25); margin-top: 0.2rem; letter-spacing: 0.08em; }
+.cover-ver { font-size: 0.65rem; color: rgba(255,255,255,0.2); letter-spacing: 0.18em; text-transform: uppercase; }
+
+/* ── CHAPTER BAND ───────────────────────────────────── */
+.ch-band {
+  background: var(--dark-2);
+  padding: 3rem 4rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: end;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.ch-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 800; line-height: 1; letter-spacing: -0.055em;
+  color: rgba(255,255,255,0.08); user-select: none;
+}
+.ch-info h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700; color: #fff; line-height: 1.05; letter-spacing: -0.025em;
+}
+.ch-info p { color: rgba(255,255,255,0.45); font-size: 0.9rem; margin-top: 0.5rem; max-width: 520px; }
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.wrap { max-width: 920px; margin: 0 auto; padding: 4rem; }
+
+.sec-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── BRIEF ──────────────────────────────────────────── */
+.brief {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+  font-weight: 500; line-height: 1.35; color: var(--ink);
+  max-width: 700px; margin-bottom: 1.5rem;
+}
+.brief strong { color: var(--indigo); }
+.body-lg { font-size: 1rem; line-height: 1.7; color: var(--ink-2); max-width: 660px; margin-bottom: 2rem; }
+
+/* ── RULES LIST ─────────────────────────────────────── */
+.rules { list-style: none; margin-bottom: 3rem; }
+.rule {
+  display: grid; grid-template-columns: 52px 1fr; gap: 1rem;
+  padding: 1.25rem 0; border-bottom: 1px solid var(--border); align-items: start;
+}
+.rules .rule:first-child { border-top: 1px solid var(--border); }
+.rule-n { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--ink-3); padding-top: 0.15rem; }
+.rule h4 { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+.rule p { font-size: 0.82rem; color: var(--ink-2); line-height: 1.55; }
+.rtag {
+  display: inline-block; font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.2rem 0.55rem; border-radius: 3px; margin-top: 0.5rem; margin-right: 0.3rem;
+}
+
+/* ── SOURCES ────────────────────────────────────────── */
+.sources {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; margin-bottom: 3rem;
+}
+.src { background: var(--white); padding: 1.5rem; }
+.src-n { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.src h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.75rem; }
+.src-imgs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.75rem;
+}
+.src-img {
+  aspect-ratio: 16/9; border-radius: 4px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--paper);
+}
+.src-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.src p { font-size: 0.78rem; color: var(--ink-2); line-height: 1.5; margin-bottom: 0.5rem; }
+.src-jur { font-size: 0.75rem; font-weight: 600; color: var(--ink); margin-top: 0.5rem; margin-bottom: 0.25rem; }
+.stag {
+  display: inline-block; font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+  padding: 0.2rem 0.5rem; border-radius: 3px; margin-top: 0.3rem; margin-right: 0.25rem;
+}
+
+/* ── PALETTE ────────────────────────────────────────── */
+.pal-strip {
+  display: flex; height: 72px; border-radius: 8px;
+  overflow: hidden; border: 1px solid var(--border); margin-bottom: 1.5rem;
+}
+.chip { flex: 1; position: relative; transition: flex 0.2s ease; cursor: default; min-width: 0; }
+.chip:hover { flex: 3; }
+.chip-name {
+  position: absolute; bottom: 0.35rem; left: 0; right: 0;
+  text-align: center; font-size: 0.56rem; font-weight: 600;
+  letter-spacing: 0.04em; opacity: 0; transition: opacity 0.15s; padding: 0 2px;
+}
+.chip:hover .chip-name { opacity: 1; }
+
+.color-roles {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; margin-bottom: 3rem;
+}
+.cr { background: var(--white); padding: 1rem 1.25rem; display: flex; gap: 0.75rem; align-items: center; }
+.cr-dot { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.07); }
+.cr-name { font-size: 0.8rem; font-weight: 600; }
+.cr-desc { font-size: 0.68rem; color: var(--ink-3); }
+.cr-hex { font-size: 0.65rem; font-family: monospace; color: var(--ink-3); letter-spacing: 0.04em; }
+
+/* ── TYPE SCALE ─────────────────────────────────────── */
+.type-scale { margin-bottom: 3rem; }
+.trow {
+  display: grid; grid-template-columns: 150px 1fr; gap: 2rem;
+  padding: 1.5rem 0; border-bottom: 1px solid var(--border); align-items: baseline;
+}
+.trow:first-child { border-top: 1px solid var(--border); }
+.tmeta { font-size: 0.7rem; color: var(--ink-3); line-height: 1.6; }
+.tmeta strong { display: block; font-size: 0.72rem; font-weight: 600; color: var(--ink-2); margin-bottom: 0.1rem; }
+
+/* ── COMPONENT DEMOS ────────────────────────────────── */
+.cdemo { margin-bottom: 3rem; }
+.demo-lbl {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.75rem;
+}
+.demo-box {
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; background: var(--paper); padding: 2rem;
+}
+.demo-box.white-bg { background: var(--white); }
+.demo-note {
+  font-size: 0.75rem; color: var(--ink-2); margin-top: 0.75rem;
+  padding-top: 0.75rem; border-top: 1px solid var(--border); line-height: 1.5;
+}
+
+/* ── THE ACTUAL COMPONENTS (used in both guide & prototype) ── */
+
+/* Chapter Opener */
+.book-opener {
+  background: var(--dark);
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.opener-bg-num {
+  position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+  font-family: 'Space Grotesk', sans-serif; font-size: 8rem; font-weight: 800;
+  line-height: 1; color: rgba(255,255,255,0.05); letter-spacing: -0.05em;
+  user-select: none;
+}
+.opener-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(0,188,212,0.75); margin-bottom: 0.75rem;
+}
+.opener-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800; color: #fff; line-height: 1.05; letter-spacing: -0.03em; max-width: 540px;
+}
+.opener-desc { font-size: 0.9rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; max-width: 440px; }
+
+/* Callout */
+.callout {
+  border-left: 4px solid; border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem; margin: 1.25rem 0; background: var(--white);
+}
+.callout-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.35rem; }
+.callout p { font-size: 0.875rem; line-height: 1.55; color: var(--ink-2); }
+.c-concept { border-color: var(--indigo); } .c-concept .callout-lbl { color: var(--indigo); }
+.c-note    { border-color: var(--blue);   } .c-note    .callout-lbl { color: var(--blue);   }
+.c-warn    { border-color: var(--amber);  } .c-warn    .callout-lbl { color: var(--amber);  }
+.c-evid    { border-color: var(--green);  } .c-evid    .callout-lbl { color: var(--green);  }
+.c-crit    { border-color: var(--red);    } .c-crit    .callout-lbl { color: var(--red);    }
+
+/* Pull Quote */
+.pull-q {
+  padding: 1.75rem 0;
+  border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  margin: 2rem 0;
+}
+.pull-q-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink);
+}
+.pull-q-src { font-size: 0.72rem; color: var(--ink-3); margin-top: 0.65rem; letter-spacing: 0.05em; }
+
+/* Definition */
+.defn {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1.25rem; margin: 1.25rem 0;
+}
+.defn-term { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.defn-rule { width: 32px; height: 2px; background: var(--indigo); margin-bottom: 0.6rem; }
+.defn p { font-size: 0.85rem; color: var(--ink-2); line-height: 1.55; }
+
+/* Key Stat */
+.stat-grid {
+  display: grid; gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden; margin: 1.25rem 0;
+}
+.stat-cell { background: var(--white); padding: 1.75rem; text-align: center; }
+.stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 800; line-height: 1; letter-spacing: -0.04em;
+}
+.stat-lbl { font-size: 0.8rem; color: var(--ink-2); margin-top: 0.5rem; line-height: 1.4; max-width: 180px; margin-left: auto; margin-right: auto; }
+
+/* Summary Box */
+.summary {
+  background: var(--dark); border-radius: 6px; padding: 1.75rem; margin: 2rem 0;
+}
+.summary-lbl {
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(0,188,212,0.75); margin-bottom: 0.75rem;
+}
+.summary ul { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+.summary li { font-size: 0.875rem; color: rgba(255,255,255,0.75); display: flex; gap: 0.75rem; align-items: baseline; }
+.summary li::before { content: '—'; color: rgba(0,188,212,0.65); flex-shrink: 0; }
+
+/* AI Prompt Block */
+.prompt {
+  background: var(--dark); border-radius: 8px; padding: 2.5rem; margin-bottom: 3rem;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.prompt-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(0,188,212,0.7); margin-bottom: 1.25rem; }
+.prompt pre {
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.78rem; line-height: 1.85; color: rgba(255,255,255,0.75);
+  white-space: pre-wrap; word-break: break-word;
+}
+.prompt .cm { color: rgba(0,188,212,0.55); }
+.prompt .kw { color: rgba(255,255,255,0.4); }
+.prompt .vl { color: rgba(255,210,100,0.9); }
+.prompt .no { color: rgba(255,100,100,0.85); }
+
+/* Footer */
+.doc-footer {
+  max-width: 920px; margin: 0 auto;
+  padding: 2rem 4rem; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+}
+.doc-footer a { color: var(--ink-3); text-decoration: none; }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .cover, .ch-band, .wrap { padding: 2rem 1.5rem; }
+  .sources { grid-template-columns: 1fr; }
+  .trow { grid-template-columns: 1fr; }
+  .ch-band { grid-template-columns: 1fr; }
+  .ch-num { font-size: 4rem; }
+}
+
+@media print {
+  .ch-band, .cover, .book-opener, .summary, .prompt { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ COVER -->
+<section class="cover">
+  <div class="cover-glow"></div>
+  <div class="cover-glow-2"></div>
+  <div class="cover-bg-x">X</div>
+  <div class="cover-eyebrow">Bookit · Visual Art Direction · v1.0 · Draft</div>
+  <h1>Style<br>X</h1>
+  <div class="cover-footer">
+    <div>
+      <div class="cover-footer-title">The output visual system for Bookit-generated books</div>
+      <div class="cover-footer-sub">AI-optimized · Human-readable · Print-ready &nbsp;·&nbsp; 2026</div>
+    </div>
+    <div class="cover-ver">Internal Reference</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ CHAPTER 01: THE BRIEF -->
+<div class="ch-band" id="s1">
+  <div class="ch-num">01</div>
+  <div class="ch-info">
+    <h2>The Brief</h2>
+    <p>What Style X is, what it commits to, and why it exists as a system rather than a mood board.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-label">Mission</div>
+
+  <p class="brief">
+    Style X is the visual system for every book Bookit produces. It is not a mood board. It is a <strong>structured agreement</strong> between three distinct visual languages — each given jurisdiction over a specific layer of every document.
+  </p>
+
+  <p class="body-lg">
+    Most educational documents fail visually for one of two reasons: they play it too safe and become forgettable, or they lean too hard into one expressive style and become illegible. Style X solves this by assigning each aesthetic its own lane. Three styles. Three jurisdictions. One document.
+  </p>
+
+  <div class="sec-label">The Three Commitments</div>
+
+  <ul class="rules">
+    <li class="rule">
+      <span class="rule-n">I</span>
+      <div>
+        <h4>Content pages are always off-white.</h4>
+        <p>Background <code style="font-size:0.78em;background:var(--border);padding:0.1em 0.4em;border-radius:3px">#f7f4ef</code>. No dark backgrounds on reading surfaces. Print economy, screen legibility, and accessibility are non-negotiable constraints — not preferences.</p>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">II</span>
+      <div>
+        <h4>Color lives in components, not grounds.</h4>
+        <p>Saturated color appears in callout boxes, chapter openers, stat blocks, and diagrams. Never as a full-bleed page background in content areas. The page is quiet. The components carry the energy.</p>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">III</span>
+      <div>
+        <h4>Typography does the heavy lifting at display scale.</h4>
+        <p>Section numbers, chapter titles, and pull quotes use Space Grotesk 800 at extreme scale. Decorative illustration is not part of Style X — bold type replaces it.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════ CHAPTER 02: THE THREE SOURCES -->
+<div class="ch-band" id="s2">
+  <div class="ch-num">02</div>
+  <div class="ch-info">
+    <h2>The Three Sources</h2>
+    <p>Where Style X comes from — and the specific DNA each source contributes to the system.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-label">Source Reference + Jurisdiction</div>
+
+  <div class="sources">
+    <div class="src">
+      <div class="src-n" style="color:var(--blue)">Source 01</div>
+      <h3>Dark Atmospheric</h3>
+      <div class="src-imgs">
+        <div class="src-img"><img src="Screenshot 2026-05-06 110002.png" alt="Cosmic silhouette"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 110008.png" alt="Circuit glow"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 110026.png" alt="Geometric icon"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 112921.png" alt="Neural map"></div>
+      </div>
+      <p>Bioluminescent glows on near-black grounds. Flat silhouetted characters. Selective luminosity as the primary design tool. Light is earned, not assumed.</p>
+      <div class="src-jur">Jurisdiction in Style X:</div>
+      <p>Chapter openers. Cover. Summary boxes. Empty states.</p>
+      <div style="margin-top:0.6rem">
+        <span class="stag" style="background:var(--blue)">Dark bg only</span>
+        <span class="stag" style="background:var(--blue)">Chapter ends</span>
+      </div>
+    </div>
+
+    <div class="src">
+      <div class="src-n" style="color:var(--red)">Source 02</div>
+      <h3>Vivid Flat &amp; Motion</h3>
+      <div class="src-imgs">
+        <div class="src-img"><img src="Screenshot 2026-05-06 113018.png" alt="Characters"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 113024.png" alt="Globe"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 113034.png" alt="Panels"></div>
+        <div class="src-img"><img src="Screenshot 2026-05-06 113042.png" alt="Evolution"></div>
+      </div>
+      <p>Saturated flat color blocks. Rounded, accessible character forms. The high-energy educational illustration language of modern motion graphics.</p>
+      <div class="src-jur">Jurisdiction in Style X:</div>
+      <p>All callout boxes. Diagrams. Stat blocks. Instructional components.</p>
+      <div style="margin-top:0.6rem">
+        <span class="stag" style="background:var(--red)">Components</span>
+        <span class="stag" style="background:var(--red)">Accent palette</span>
+      </div>
+    </div>
+
+    <div class="src">
+      <div class="src-n" style="color:var(--amber)">Source 03</div>
+      <h3>Anime Action &amp; Urban</h3>
+      <div class="src-imgs">
+        <div class="src-img"><img src="Zenless-Zone-Zero-imag.webp" alt="ZZZ graphic type"></div>
+        <div class="src-img"><img src="ZZZ-review-header.webp" alt="ZZZ ensemble"></div>
+        <div class="src-img"><img src="GI_CharacterGroup.webp" alt="Genshin roster"></div>
+        <div class="src-img"><img src="MV5BN2E5NjNiYTEtZWFjZS00M2U5LWE3NzktZTNmMWFiMTc1Y2RjXkEyXkFqcGc@._V1_.jpg" alt="TWEWY" style="object-position:top"></div>
+      </div>
+      <p>High-detail anime character art fused with graphic street energy. Display type at extreme scale used as a compositional element, not decoration.</p>
+      <div class="src-jur">Jurisdiction in Style X:</div>
+      <p>Typography scale. Pull quotes. Display moments. Section numbers.</p>
+      <div style="margin-top:0.6rem">
+        <span class="stag" style="background:var(--amber);color:#1a0e00">Type scale</span>
+        <span class="stag" style="background:var(--amber);color:#1a0e00">Bold weight</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">Fusion Rules</div>
+
+  <ul class="rules">
+    <li class="rule">
+      <span class="rule-n">R01</span>
+      <div>
+        <h4>Dark backgrounds appear at chapter openers and summary boxes only.</h4>
+        <p>Source 01's dark atmospheric quality is reserved for the start and end of each chapter. Content pages between them are always off-white. Dark backgrounds must be earned by structural position — not used for visual variety.</p>
+        <span class="rtag" style="background:#005CE615;color:var(--blue)">Source 01</span>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">R02</span>
+      <div>
+        <h4>All instructional components use flat solid color — no gradients.</h4>
+        <p>Callout boxes, stat blocks, and diagram frames use the vivid flat palette with solid color borders or fills. Gradients are prohibited in all components, all contexts.</p>
+        <span class="rtag" style="background:#E03C3115;color:var(--red)">Source 02</span>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">R03</span>
+      <div>
+        <h4>Section numbers minimum 4rem. Pull quotes minimum 1.5rem.</h4>
+        <p>Source 03's contribution is the willingness to use scale. Small decorative numbers are not Style X. If a number or quote is large enough to read as a visual element on the page, it's doing its job.</p>
+        <span class="rtag" style="background:#F59E0B15;color:#b37500">Source 03</span>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">R04</span>
+      <div>
+        <h4>Each book uses one primary accent color. Do not mix within a book.</h4>
+        <p>Consistency of accent color is how the reader builds a mental model of the book's visual language. Mixing accent colors breaks that coherence. One book, one accent.</p>
+        <span class="rtag" style="background:#3525CD15;color:var(--indigo)">System rule</span>
+      </div>
+    </li>
+    <li class="rule">
+      <span class="rule-n">R05</span>
+      <div>
+        <h4>Cyan (#00BCD4) is reserved for dark backgrounds only.</h4>
+        <p>Cyan is the glow color — the accent that appears on the dark chapter opener and summary box. It does not appear in any component on an off-white background. This maintains its impact as a signal of structural transition.</p>
+        <span class="rtag" style="background:#005CE615;color:var(--blue)">Source 01</span>
+        <span class="rtag" style="background:#3525CD15;color:var(--indigo)">System rule</span>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════ CHAPTER 03: COLOR SYSTEM -->
+<div class="ch-band" id="s3">
+  <div class="ch-num">03</div>
+  <div class="ch-info">
+    <h2>Color System</h2>
+    <p>The full Style X palette, role assignments, and usage constraints.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-label">Palette Strip — hover to expand</div>
+  <div class="pal-strip">
+    <div class="chip" style="background:#f7f4ef;border-right:1px solid #e2ddd6"><span class="chip-name" style="color:#888">Paper</span></div>
+    <div class="chip" style="background:#ffffff;border-right:1px solid #e2ddd6"><span class="chip-name" style="color:#888">White</span></div>
+    <div class="chip" style="background:#1a1a24"><span class="chip-name" style="color:rgba(255,255,255,0.5)">Ink</span></div>
+    <div class="chip" style="background:#4b5060"><span class="chip-name" style="color:rgba(255,255,255,0.5)">Ink 2</span></div>
+    <div class="chip" style="background:#0a0d18"><span class="chip-name" style="color:rgba(255,255,255,0.4)">Dark</span></div>
+    <div class="chip" style="background:#3525CD"><span class="chip-name" style="color:#fff">Indigo</span></div>
+    <div class="chip" style="background:#005CE6"><span class="chip-name" style="color:#fff">Blue</span></div>
+    <div class="chip" style="background:#00BCD4"><span class="chip-name" style="color:#002530">Cyan</span></div>
+    <div class="chip" style="background:#E03C31"><span class="chip-name" style="color:#fff">Red</span></div>
+    <div class="chip" style="background:#F59E0B"><span class="chip-name" style="color:#1a0e00">Amber</span></div>
+    <div class="chip" style="background:#43A047"><span class="chip-name" style="color:#fff">Green</span></div>
+  </div>
+
+  <div class="sec-label">Roles &amp; Usage</div>
+  <div class="color-roles">
+    <div class="cr"><div class="cr-dot" style="background:#f7f4ef"></div><div><div class="cr-name">Paper</div><div class="cr-desc">All content page backgrounds</div></div><div class="cr-hex">#f7f4ef</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#0a0d18"></div><div><div class="cr-name">Dark</div><div class="cr-desc">Chapter openers &amp; summary boxes</div></div><div class="cr-hex">#0a0d18</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#1a1a24"></div><div><div class="cr-name">Ink</div><div class="cr-desc">Headlines, all display text</div></div><div class="cr-hex">#1a1a24</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#4b5060"></div><div><div class="cr-name">Ink 2</div><div class="cr-desc">All body copy</div></div><div class="cr-hex">#4b5060</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#00BCD4"></div><div><div class="cr-name">Cyan</div><div class="cr-desc">Dark layer accents only</div></div><div class="cr-hex">#00BCD4</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#3525CD"></div><div><div class="cr-name">Indigo</div><div class="cr-desc">Bookit brand / Key Concept callout</div></div><div class="cr-hex">#3525CD</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#005CE6"></div><div><div class="cr-name">Blue</div><div class="cr-desc">Note / informational callout</div></div><div class="cr-hex">#005CE6</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#F59E0B"></div><div><div class="cr-name">Amber</div><div class="cr-desc">Important / warning callout</div></div><div class="cr-hex">#F59E0B</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#43A047"></div><div><div class="cr-name">Green</div><div class="cr-desc">Evidence / research callout</div></div><div class="cr-hex">#43A047</div></div>
+    <div class="cr"><div class="cr-dot" style="background:#E03C31"></div><div><div class="cr-name">Red</div><div class="cr-desc">Critical / caution callout</div></div><div class="cr-hex">#E03C31</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ CHAPTER 04: TYPOGRAPHY -->
+<div class="ch-band" id="s4">
+  <div class="ch-num">04</div>
+  <div class="ch-info">
+    <h2>Typography</h2>
+    <p>Two fonts. One scale. No decorative type choices — every size has a job.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-label">Scale</div>
+  <div class="type-scale">
+    <div class="trow">
+      <div class="tmeta"><strong>Display</strong>Space Grotesk 800<br>64–96px · −0.055em<br>Cover, chapter titles</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,7vw,4.5rem);font-weight:800;line-height:0.95;letter-spacing:-0.055em">Style X</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>H1 — Section</strong>Space Grotesk 700<br>36–48px · −0.03em<br>Chapter section titles</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;line-height:1.05;letter-spacing:-0.03em">Section Title Here</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>H2 — Subsection</strong>Space Grotesk 700<br>22–26px · −0.02em<br>Subsection headings</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.02em">Subsection Heading</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>H3 — Label</strong>Space Grotesk 600<br>17–18px · 0em<br>Component labels, callout titles</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600">Component Label / Callout Title</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>Body LG</strong>Inter 400<br>18px · 1.7 leading<br>First paragraph after a heading</div>
+      <div style="font-size:1.1rem;line-height:1.7;color:var(--ink-2);max-width:480px">The opening paragraph after each heading uses this slightly larger size to ease the visual transition from display text to body text.</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>Body</strong>Inter 400<br>16px · 1.65 leading<br>All main body copy</div>
+      <div style="font-size:1rem;line-height:1.65;color:var(--ink-2);max-width:480px">Standard reading paragraph. All main content uses this size. Color is ink-2 (#4b5060), never pure black — this improves readability on off-white grounds.</div>
+    </div>
+    <div class="trow">
+      <div class="tmeta"><strong>Caption</strong>Inter 400<br>12px · 1.5 leading<br>Image captions, figure labels</div>
+      <div style="font-size:0.75rem;line-height:1.5;color:var(--ink-3)">Figure 1.2 — Caption text for images and diagrams. Always ink-3 (#9ca3af).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ CHAPTER 05: COMPONENTS -->
+<div class="ch-band" id="s5">
+  <div class="ch-num">05</div>
+  <div class="ch-info">
+    <h2>Components</h2>
+    <p>Every building block of a Bookit book, rendered in Style X with usage notes.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-01 — Chapter Opener</div>
+    <div class="book-opener">
+      <div class="opener-bg-num">01</div>
+      <div class="opener-label">Chapter One</div>
+      <div class="opener-title">What Is a Ulysses Pact?</div>
+      <div class="opener-desc">A decision made during clarity designed to bind your future self when temptation arrives.</div>
+    </div>
+    <div class="demo-note"><strong>Source 01 DNA.</strong> Dark background (#0a0d18). Large faded chapter number (right-aligned, 8rem, 5% white opacity). Cyan eyebrow label. White title in Space Grotesk 800. Off-white content begins immediately below.</div>
+  </div>
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-02 — Callout Boxes (5 types)</div>
+    <div class="demo-box white-bg">
+      <div class="callout c-concept">
+        <div class="callout-lbl">Key Concept</div>
+        <p>A Ulysses pact is a freely made decision designed to bind yourself in the future, preventing poor choices when you anticipate being in a compromised state of judgment.</p>
+      </div>
+      <div class="callout c-note">
+        <div class="callout-lbl">Note</div>
+        <p>In medicine, the term appears in advance directives (living wills), though there is ongoing debate about whether decisions made in one health state should bind someone in a markedly different condition.</p>
+      </div>
+      <div class="callout c-warn">
+        <div class="callout-lbl">Important</div>
+        <p>Soft commitment devices may be less effective when baseline motivation is already strong. Hard commitments with clear penalties consistently outperform soft versions in controlled trials.</p>
+      </div>
+      <div class="callout c-evid">
+        <div class="callout-lbl">Evidence</div>
+        <p>Financial stakes increase follow-through rates 2–3× compared to pledge-only conditions (StickK platform data, 409-participant meta-analysis).</p>
+      </div>
+      <div class="callout c-crit">
+        <div class="callout-lbl">Critical</div>
+        <p>Enforcing a commitment contract when a patient has changed their mind raises serious ethical concerns — particularly for individuals who retain decision-making capacity during a crisis.</p>
+      </div>
+    </div>
+    <div class="demo-note"><strong>Source 02 DNA.</strong> 4px solid left border. White fill (never tinted). Label: 0.6rem, 700, tracked caps. Five types — color signals semantic meaning. No gradients. Margins: 1.25rem top and bottom.</div>
+  </div>
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-03 — Pull Quote</div>
+    <div class="demo-box white-bg">
+      <div class="pull-q">
+        <div class="pull-q-text">"You don't eliminate the temptation — you remove the possibility of giving in to it."</div>
+        <div class="pull-q-src">— Nick Wignall · Ulysses Pact</div>
+      </div>
+    </div>
+    <div class="demo-note"><strong>Source 03 DNA.</strong> Space Grotesk 600, minimum 1.5rem, tight tracking. 2px solid ink border top and bottom — no background color, no box. Attribution in caption size below. One pull quote per major section maximum.</div>
+  </div>
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-04 — Definition Box</div>
+    <div class="demo-box white-bg">
+      <div class="defn">
+        <div class="defn-term">Commitment Device</div>
+        <div class="defn-rule"></div>
+        <p>A pre-commitment mechanism that restricts future choices to prevent anticipated poor decisions. Most effective when designed during a moment of clarity before temptation or weakness arrives.</p>
+      </div>
+    </div>
+    <div class="demo-note">White card with 1px border. Term in Space Grotesk 700. 32px × 2px accent-color rule beneath the term. Body text in Inter, ink-2. Use on first occurrence of each technical term only — never repeat.</div>
+  </div>
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-05 — Key Stat</div>
+    <div class="demo-box" style="background:var(--paper);padding:0">
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--indigo)">82.8%</div>
+          <div class="stat-lbl">Success rate with financial stakes on the line</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--green)">3×</div>
+          <div class="stat-lbl">More likely to hit goals vs. no stakes</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" style="color:var(--red)">2×</div>
+          <div class="stat-lbl">Improvement over willpower alone</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-note"><strong>Source 03 DNA (scale) + Source 02 DNA (color).</strong> Space Grotesk 800, minimum 2.5rem. Number color = book accent color. 1–3 columns separated by 1px border lines. White cell backgrounds. Never use more than 3 stats per block.</div>
+  </div>
+
+  <div class="cdemo">
+    <div class="demo-lbl">C-06 — Chapter Summary</div>
+    <div class="summary">
+      <div class="summary-lbl">Chapter Summary</div>
+      <ul>
+        <li>A Ulysses pact is a pre-commitment made during clarity to bind future behavior under anticipated weakness</li>
+        <li>The strategy works by removing temptation, creating barriers, or adding meaningful friction to bad choices</li>
+        <li>Financial stakes raise success rates from ~50% to 82.8% — the cost of backing out must be real</li>
+        <li>Social accountability adds ~20% improvement beyond financial stakes alone</li>
+      </ul>
+    </div>
+    <div class="demo-note"><strong>Source 01 DNA.</strong> Dark background (#0a0d18) — mirrors the chapter opener and bookends the chapter. Cyan eyebrow label. Em dash bullet in cyan. White/75% body text. Always the last element in a chapter before the next opener.</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════ CHAPTER 06: AI PROMPT LAYER -->
+<div class="ch-band" id="s6">
+  <div class="ch-num">06</div>
+  <div class="ch-info">
+    <h2>AI Prompt Layer</h2>
+    <p>Copy-pasteable system context for generating on-brand Bookit content with any LLM.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-label">System Context Block</div>
+
+  <div class="prompt">
+    <div class="prompt-lbl">Style X · Bookit Output Visual System · v1.0</div>
+    <pre><span class="cm">## STYLE X — BOOKIT VISUAL SYSTEM PROMPT</span>
+<span class="cm">## Paste this block into any LLM context when generating Bookit book content.</span>
+
+<span class="cm"># ── GROUND RULES ──────────────────────────────────</span>
+<span class="kw">page_background:</span>        <span class="vl">#f7f4ef</span>   <span class="cm">(warm off-white — always, no exceptions)</span>
+<span class="kw">content_card_surface:</span>   <span class="vl">#ffffff</span>   <span class="cm">(component boxes, definition cards)</span>
+<span class="kw">dark_bg:</span>                <span class="vl">#0a0d18</span>   <span class="cm">(chapter openers + summary boxes ONLY)</span>
+<span class="no">PROHIBITED:</span>             <span class="vl">gradients on any component, any context</span>
+<span class="no">PROHIBITED:</span>             <span class="vl">dark backgrounds on reading/body pages</span>
+<span class="no">PROHIBITED:</span>             <span class="vl">multiple accent colors within one book</span>
+<span class="no">PROHIBITED:</span>             <span class="vl">cyan (#00BCD4) on off-white backgrounds</span>
+
+<span class="cm"># ── TYPOGRAPHY ─────────────────────────────────────</span>
+<span class="kw">display_font:</span>           <span class="vl">Space Grotesk, weight 800, tracking -0.055em</span>
+<span class="kw">body_font:</span>              <span class="vl">Inter, weight 400, line-height 1.65</span>
+<span class="kw">chapter_title:</span>          <span class="vl">Space Grotesk 800, clamp(2.5rem, 6vw, 4rem)</span>
+<span class="kw">section_number:</span>         <span class="vl">minimum 4rem — larger is always correct</span>
+<span class="kw">pull_quote:</span>             <span class="vl">Space Grotesk 600, minimum 1.5rem</span>
+<span class="kw">body_color:</span>             <span class="vl">#4b5060 (ink-2) — never pure black on off-white</span>
+<span class="kw">caption_color:</span>          <span class="vl">#9ca3af (ink-3)</span>
+
+<span class="cm"># ── COLOR ROLES ────────────────────────────────────</span>
+<span class="kw">accent_per_book:</span>        <span class="vl">ONE color only — assign at project creation</span>
+<span class="kw">default_accent:</span>         <span class="vl">#3525CD (Bookit indigo)</span>
+<span class="kw">callout_key_concept:</span>    <span class="vl">#3525CD border + label</span>
+<span class="kw">callout_note:</span>           <span class="vl">#005CE6 border + label</span>
+<span class="kw">callout_important:</span>      <span class="vl">#F59E0B border + label</span>
+<span class="kw">callout_evidence:</span>       <span class="vl">#43A047 border + label</span>
+<span class="kw">callout_critical:</span>       <span class="vl">#E03C31 border + label</span>
+<span class="kw">dark_layer_accent:</span>      <span class="vl">#00BCD4 (cyan) — labels on dark bg only</span>
+<span class="kw">stat_number_color:</span>      <span class="vl">book accent color</span>
+
+<span class="cm"># ── CHAPTER STRUCTURE ──────────────────────────────</span>
+<span class="kw">chapter_open:</span>           <span class="vl">dark bg + faded chapter num (right) + cyan label + white title</span>
+<span class="kw">chapter_body:</span>           <span class="vl">off-white ground, white component surfaces</span>
+<span class="kw">chapter_close:</span>          <span class="vl">summary box: dark bg + cyan label + 4–6 bullet points</span>
+<span class="kw">first_paragraph_size:</span>   <span class="vl">18px (body-lg) — then 16px for remaining paragraphs</span>
+
+<span class="cm"># ── CALLOUT BOX STRUCTURE ──────────────────────────</span>
+<span class="kw">border:</span>                 <span class="vl">4px solid (left edge only), corner-radius 0 6px 6px 0</span>
+<span class="kw">background:</span>             <span class="vl">#ffffff — always white, never tinted</span>
+<span class="kw">label:</span>                  <span class="vl">0.6rem, weight 700, tracked caps, color matches border</span>
+
+<span class="cm"># ── PULL QUOTE STRUCTURE ───────────────────────────</span>
+<span class="kw">border:</span>                 <span class="vl">2px solid #1a1a24, top and bottom only</span>
+<span class="kw">background:</span>             <span class="vl">none — transparent</span>
+<span class="kw">attribution:</span>            <span class="vl">required, 0.72rem, ink-3</span>
+<span class="kw">frequency:</span>              <span class="vl">maximum one per major section</span>
+
+<span class="cm"># ── DEFINITION BOX STRUCTURE ───────────────────────</span>
+<span class="kw">term:</span>                   <span class="vl">Space Grotesk 700, 1rem</span>
+<span class="kw">rule:</span>                   <span class="vl">32px × 2px, accent color, below term</span>
+<span class="kw">trigger:</span>                <span class="vl">first occurrence of each technical term only</span>
+
+<span class="cm"># ── KEY STAT STRUCTURE ─────────────────────────────</span>
+<span class="kw">number:</span>                 <span class="vl">Space Grotesk 800, minimum 2.5rem, accent color</span>
+<span class="kw">label:</span>                  <span class="vl">Inter 400, 0.8rem, ink-2, max 3 lines</span>
+<span class="kw">layout:</span>                 <span class="vl">1–3 columns, 1px border separators between cells</span>
+<span class="kw">limit:</span>                  <span class="vl">maximum 3 stats per block</span></pre>
+  </div>
+</div>
+
+<footer class="doc-footer">
+  <span>Style X · Bookit Art Direction · v1.0 · 2026</span>
+  <a href="#top">↑ Top</a>
+</footer>
+
+</body>
+</html>

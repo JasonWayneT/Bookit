@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applyr — Technical Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #0D9488;
+  --accent-dark: #0f766e;
+  --accent-light: #99f6e4;
+  --paper: #f7f4ef;
+  --dark: #0a0d18;
+  --mid: #2d3748;
+  --muted: #718096;
+  --border: #e2ddd6;
+  --code-bg: #111827;
+  --warm-gray: #e8e4de;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #d8d4ce;
+  color: var(--dark);
+  padding: 2rem 0 4rem;
+}
+
+.book-section {
+  width: 680px;
+  margin: 2rem auto;
+  background: var(--paper);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+/* ── COVER ── */
+.cover { padding: 0; }
+.cover-art { width: 100%; display: block; }
+.cover-text {
+  padding: 2.5rem 3rem 2rem;
+  border-top: 3px solid var(--accent);
+}
+.cover-eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.cover-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 0.95;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.cover-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+.cover-meta {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--border);
+}
+
+/* ── TOC ── */
+.toc { padding: 3rem; }
+.toc-header {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--accent);
+}
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.toc-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 2rem;
+  opacity: 0.6;
+}
+.toc-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+  flex: 1;
+}
+.toc-blurb {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+  max-width: 260px;
+  text-align: right;
+}
+
+/* ── CHAPTER ── */
+.chapter { padding: 0; }
+.chapter-header {
+  padding: 2.75rem 3rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.chapter-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+.chapter-lead {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--mid);
+  max-width: 520px;
+}
+.chapter-body { padding: 2.5rem 3rem; }
+
+/* ── TYPOGRAPHY ── */
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 2.25rem 0 0.6rem;
+}
+.section-title:first-child { margin-top: 0; }
+
+p {
+  font-size: 0.875rem;
+  line-height: 1.72;
+  color: var(--mid);
+  margin-bottom: 0.9rem;
+}
+p:last-child { margin-bottom: 0; }
+
+hr.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+.pull-quote {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.45;
+  padding: 1.5rem 0;
+  border-top: 3px solid var(--accent);
+  border-bottom: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* ── STAT GRID ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.875rem;
+  margin: 1.5rem 0 2rem;
+}
+.stat-card {
+  background: var(--dark);
+  padding: 1.25rem 1rem 1rem;
+  border-radius: 3px;
+}
+.stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent-light);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── FLOW STEPS ── */
+.flow-steps { margin: 1.25rem 0; }
+.flow-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.flow-step:last-child { border-bottom: none; }
+.flow-step-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 1.5rem;
+  padding-top: 0.1rem;
+}
+.flow-step-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--mid);
+  flex: 1;
+}
+.flow-step-text strong { font-weight: 600; color: var(--dark); }
+
+/* ── DECISION CARDS ── */
+.decision-card {
+  border-left: 3px solid var(--accent);
+  padding: 1.1rem 1.25rem 1.1rem 1.5rem;
+  margin-bottom: 1rem;
+  background: white;
+  border-radius: 0 3px 3px 0;
+}
+.decision-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+.decision-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.4rem;
+}
+.decision-body {
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.decision-tradeoff {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+/* ── SCHEMA TABLE ── */
+.schema-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin: 1rem 0 1.5rem;
+}
+.schema-table th {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.5rem 0.75rem;
+  border-bottom: 2px solid var(--accent);
+  text-align: left;
+}
+.schema-table td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--mid);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.schema-table td:first-child {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: var(--dark);
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+/* ── LLM USE CASES ── */
+.llm-case {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+.llm-case:last-child { border-bottom: none; }
+.llm-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  opacity: 0.35;
+  min-width: 2.5rem;
+  line-height: 1;
+  padding-top: 0.1rem;
+}
+.llm-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.25rem;
+}
+.llm-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; margin: 0; }
+.llm-cost {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 0.3rem;
+}
+
+/* ── CALLOUT ── */
+.callout {
+  background: rgba(13,148,136,0.07);
+  border: 1px solid rgba(13,148,136,0.2);
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+.callout-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+.callout p { font-size: 0.82rem; margin: 0; }
+
+/* ── ANTI-PATTERN CARDS ── */
+.antipattern {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.antipattern-header {
+  background: var(--warm-gray);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.antipattern-tag {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+}
+.tag-active  { background: #fee2e2; color: #b91c1c; }
+.tag-resolved { background: #dbeafe; color: #1e40af; }
+.antipattern-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+.antipattern-body { padding: 0.9rem 1rem; }
+.antipattern-body p { font-size: 0.8rem; margin-bottom: 0.5rem; }
+
+/* ── DEBT TABLE ── */
+.debt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  margin: 1rem 0;
+}
+.debt-table th {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.45rem 0.6rem;
+  border-bottom: 2px solid var(--accent);
+  text-align: left;
+}
+.debt-table td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--mid);
+  vertical-align: middle;
+}
+.debt-table td:first-child {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.8rem;
+}
+
+.badge {
+  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+}
+.badge-critical { background: #fecaca; color: #b91c1c; }
+.badge-high     { background: #fed7aa; color: #c2410c; }
+.badge-medium   { background: #fef08a; color: #854d0e; }
+.badge-low      { background: #d1fae5; color: #065f46; }
+.badge-resolved { background: #dbeafe; color: #1e40af; }
+
+/* ── LEARNING GRID ── */
+.learning-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.learning-item {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.learning-item-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.35rem;
+}
+.learning-item p { font-size: 0.77rem; margin: 0; line-height: 1.55; }
+
+/* ── END MATTER ── */
+.end-matter {
+  background: var(--dark);
+  color: white;
+  padding: 3rem;
+}
+.end-matter .chapter-num  { color: var(--accent-light); }
+.end-matter .chapter-title { color: white; }
+.end-matter .section-title { color: var(--accent-light); margin-top: 2rem; }
+.end-matter p { color: rgba(255,255,255,0.65); }
+.end-matter hr.divider { border-color: rgba(255,255,255,0.1); }
+
+.pattern-card {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.875rem;
+}
+.pattern-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 0.3rem;
+}
+.pattern-body { font-size: 0.78rem; line-height: 1.55; color: rgba(255,255,255,0.55); }
+
+/* ── DIAGRAM LABEL ── */
+.diagram-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  padding: 0.5rem 0 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     COVER
+══════════════════════════════════════ -->
+<section class="book-section cover">
+  <svg class="cover-art" viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg">
+    <rect width="680" height="290" fill="#0a0d18"/>
+    <defs>
+      <pattern id="dotgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.8" fill="rgba(255,255,255,0.04)"/>
+      </pattern>
+    </defs>
+    <rect width="680" height="290" fill="url(#dotgrid)"/>
+
+    <!-- Gray source lines -->
+    <line x1="55" y1="45"  x2="235" y2="143" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <line x1="55" y1="103" x2="235" y2="143" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <line x1="55" y1="183" x2="235" y2="143" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <line x1="55" y1="241" x2="235" y2="143" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <!-- Teal source lines -->
+    <line x1="55" y1="74"  x2="235" y2="143" stroke="#0D9488" stroke-width="1.5" opacity="0.65"/>
+    <line x1="55" y1="143" x2="235" y2="143" stroke="#0D9488" stroke-width="1.5" opacity="0.65"/>
+    <line x1="55" y1="212" x2="235" y2="143" stroke="#0D9488" stroke-width="1.5" opacity="0.65"/>
+
+    <circle cx="50" cy="45"  r="5" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="50" cy="74"  r="5" fill="#0D9488"/>
+    <circle cx="50" cy="103" r="5" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="50" cy="143" r="5" fill="#0D9488"/>
+    <circle cx="50" cy="183" r="5" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="50" cy="212" r="5" fill="#0D9488"/>
+    <circle cx="50" cy="241" r="5" fill="rgba(255,255,255,0.18)"/>
+
+    <text x="62" y="49"  font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.28)">LinkedIn</text>
+    <text x="62" y="78"  font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.55)">BuiltIn</text>
+    <text x="62" y="107" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.28)">RemoteOK</text>
+    <text x="62" y="147" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.55)">Remotive</text>
+    <text x="62" y="187" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.28)">WWR</text>
+    <text x="62" y="216" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.55)">Himalayas</text>
+    <text x="62" y="245" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="rgba(255,255,255,0.28)">Adzuna</text>
+
+    <circle cx="265" cy="143" r="32" fill="#0f1a2e" stroke="#0D9488" stroke-width="2"/>
+    <text x="265" y="139" font-family="Space Grotesk,sans-serif" font-size="11.5" font-weight="700" fill="white" text-anchor="middle">Scout</text>
+    <text x="265" y="153" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">7 sources</text>
+
+    <line x1="297" y1="143" x2="350" y2="143" stroke="#0D9488" stroke-width="1.5"/>
+    <polygon points="350,139 358,143 350,147" fill="#0D9488"/>
+
+    <circle cx="382" cy="143" r="28" fill="#0f1a2e" stroke="#0D9488" stroke-width="2"/>
+    <text x="382" y="139" font-family="Space Grotesk,sans-serif" font-size="11.5" font-weight="700" fill="white" text-anchor="middle">Score</text>
+    <text x="382" y="153" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">LLM filter</text>
+
+    <line x1="393" y1="170" x2="415" y2="215" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="387" y1="170" x2="400" y2="235" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="3,3"/>
+    <circle cx="415" cy="218" r="3" fill="rgba(255,255,255,0.1)"/>
+    <circle cx="400" cy="238" r="3" fill="rgba(255,255,255,0.1)"/>
+    <text x="430" y="222" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.18)">rejected</text>
+
+    <line x1="410" y1="143" x2="462" y2="143" stroke="#0D9488" stroke-width="1.5"/>
+    <polygon points="462,139 470,143 462,147" fill="#0D9488"/>
+
+    <circle cx="496" cy="143" r="28" fill="#0f1a2e" stroke="#0D9488" stroke-width="2"/>
+    <text x="496" y="139" font-family="Space Grotesk,sans-serif" font-size="11.5" font-weight="700" fill="white" text-anchor="middle">Draft</text>
+    <text x="496" y="153" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">resume + CL</text>
+
+    <line x1="524" y1="132" x2="573" y2="103" stroke="#0D9488" stroke-width="1.5"/>
+    <line x1="524" y1="154" x2="573" y2="183" stroke="#0D9488" stroke-width="1.5"/>
+
+    <rect x="573" y="86"  width="75" height="34" rx="4" fill="#0f1a2e" stroke="#0D9488" stroke-width="1.5"/>
+    <text x="610" y="100" font-family="Space Grotesk,sans-serif" font-size="8"   font-weight="700" fill="white" text-anchor="middle">Tailored</text>
+    <text x="610" y="112" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">Resume + CL</text>
+
+    <rect x="573" y="166" width="75" height="34" rx="4" fill="#0f1a2e" stroke="#0D9488" stroke-width="1.5"/>
+    <text x="610" y="180" font-family="Space Grotesk,sans-serif" font-size="8"   font-weight="700" fill="white" text-anchor="middle">Interview</text>
+    <text x="610" y="192" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">Cheat Sheet</text>
+
+    <text x="265" y="278" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.18)" text-anchor="middle">Discover</text>
+    <text x="382" y="278" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.18)" text-anchor="middle">Filter</text>
+    <text x="496" y="278" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.18)" text-anchor="middle">Generate</text>
+    <text x="610" y="278" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.18)" text-anchor="middle">Apply</text>
+  </svg>
+
+  <div class="cover-text">
+    <div class="cover-eyebrow">Technical Deep Dive</div>
+    <h1 class="cover-title">Applyr</h1>
+    <p class="cover-subtitle">A curated job hunt agent — architecture, decisions, and lessons from a multi-month solo build at v5.17.</p>
+    <div class="cover-meta">20 Parts · React 19 · Express · Python · SQLite · Playwright</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════ -->
+<section class="book-section toc">
+  <div class="toc-header">Contents</div>
+  <div class="toc-item">
+    <span class="toc-num">01</span>
+    <span class="toc-name">What Applyr Does</span>
+    <span class="toc-blurb">The problem, the user flow, and the system at a glance</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">02</span>
+    <span class="toc-name">Constraints &amp; Decisions</span>
+    <span class="toc-blurb">Eight architectural choices that shaped everything</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">03</span>
+    <span class="toc-name">The Pipeline</span>
+    <span class="toc-blurb">Scout, scrape, score, draft — the end-to-end flow</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">04</span>
+    <span class="toc-name">The LLM Layer</span>
+    <span class="toc-blurb">Five use cases, one fallback chain, and prompt engineering decisions</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">05</span>
+    <span class="toc-name">Lessons &amp; Debt</span>
+    <span class="toc-blurb">Accidental decisions, anti-patterns, and what to fix first</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">End</span>
+    <span class="toc-name">Key Learnings</span>
+    <span class="toc-blurb">Patterns worth keeping, patterns worth burning</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CHAPTER 1 — WHAT APPLYR DOES
+══════════════════════════════════════ -->
+<section class="book-section chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 01</div>
+    <h2 class="chapter-title">What Applyr Does</h2>
+    <p class="chapter-lead">A solo-built, local-first job hunt agent that eliminates the 80% of job searching wasted on poor-fit roles and generic documents.</p>
+  </div>
+
+  <div class="chapter-body">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value">~60</div>
+        <div class="stat-label">Project files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">5</div>
+        <div class="stat-label">Major components</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Job sources</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">v5.17</div>
+        <div class="stat-label">Current version</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">LLM providers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">&lt;$0.15</div>
+        <div class="stat-label">Cost per month</div>
+      </div>
+    </div>
+
+    <div class="section-title">The Core User Flow</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <span class="flow-step-num">1</span>
+        <span class="flow-step-text"><strong>Configure</strong> — Target role, blocklists, salary floor, and LLM API keys via a settings UI.</span>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num">2</span>
+        <span class="flow-step-text"><strong>Import experience</strong> — Paste full work history; system auto-assigns ACC/VOC/MET proof codes to every claim.</span>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num">3</span>
+        <span class="flow-step-text"><strong>Scout</strong> — Headless browser + 7 API sources scrape new postings matching the configured criteria.</span>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num">4</span>
+        <span class="flow-step-text"><strong>Score</strong> — Each job is evaluated by an LLM against the user's profile. A zero-token keyword gate runs first to eliminate obvious rejects without spending any API tokens.</span>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num">5</span>
+        <span class="flow-step-text"><strong>Draft</strong> — Roles above threshold get a company research packet, then a tailored resume, cover letter, and interview cheat sheet compiled to PDF.</span>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num">6</span>
+        <span class="flow-step-text"><strong>Apply</strong> — Review and edit assets in a WYSIWYG editor, then track the role through six lifecycle stages to Applied or Closed.</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">System Architecture</div>
+    <p>Five components across three runtimes — a React frontend, an Express server, a TypeScript scout engine, a Python pipeline, and a SQLite database connecting them all. As of May 2026, the Express server is fully modularized: <code>server/index.ts</code> is 33 lines of middleware and router mounts, with all route logic split across <code>server/routes/</code> and shared utilities in <code>server/shared.ts</code>.</p>
+
+    <!-- Architecture SVG -->
+    <svg viewBox="0 0 680 265" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;margin:1.25rem 0">
+      <!-- Browser -->
+      <rect x="270" y="8" width="140" height="36" rx="3" fill="#0a0d18"/>
+      <text x="340" y="22" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle">Browser</text>
+      <text x="340" y="35" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">React 19 · localhost:5173</text>
+
+      <line x1="340" y1="44" x2="340" y2="60" stroke="#0D9488" stroke-width="1.5"/>
+      <polygon points="336,60 340,68 344,60" fill="#0D9488"/>
+      <text x="347" y="56" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096">HTTP / SSE</text>
+
+      <!-- Express -->
+      <rect x="200" y="68" width="280" height="42" rx="3" fill="#0a0d18"/>
+      <text x="340" y="84" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">Express API Server</text>
+      <text x="340" y="99" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">index.ts (33 ln) · routes/ · shared.ts · localhost:3000</text>
+
+      <!-- Express ↔ SQLite -->
+      <line x1="480" y1="89" x2="516" y2="89" stroke="#718096" stroke-width="1.2"/>
+      <polygon points="514,85 522,89 514,93" fill="#718096"/>
+      <polygon points="482,85 474,89 482,93" fill="#718096"/>
+
+      <!-- SQLite -->
+      <rect x="522" y="70" width="138" height="38" rx="3" fill="#1a2535"/>
+      <text x="591" y="85" font-family="Space Grotesk,sans-serif" font-size="9.5" font-weight="700" fill="white" text-anchor="middle">SQLite Database</text>
+      <text x="591" y="98" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">jobagent.sqlite</text>
+
+      <!-- Express → spawn() bus -->
+      <line x1="340" y1="110" x2="340" y2="128" stroke="#718096" stroke-width="1.2"/>
+      <line x1="90"  y1="128" x2="560" y2="128" stroke="#718096" stroke-width="1.2"/>
+      <line x1="90"  y1="128" x2="90"  y2="145" stroke="#718096" stroke-width="1.2"/>
+      <line x1="310" y1="128" x2="310" y2="145" stroke="#718096" stroke-width="1.2"/>
+      <line x1="540" y1="128" x2="540" y2="145" stroke="#718096" stroke-width="1.2"/>
+      <text x="340" y="124" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096" text-anchor="middle">spawn()</text>
+      <polygon points="86,145 90,153 94,145"   fill="#718096"/>
+      <polygon points="306,145 310,153 314,145" fill="#718096"/>
+      <polygon points="536,145 540,153 544,145" fill="#718096"/>
+
+      <!-- Scout Engine -->
+      <rect x="15" y="153" width="150" height="82" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="90" y="171" font-family="Space Grotesk,sans-serif" font-size="9.5" font-weight="700" fill="#0a0d18" text-anchor="middle">Scout Engine</text>
+      <text x="90" y="184" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">LinkedIn · BuiltIn</text>
+      <text x="90" y="195" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">RemoteOK · Remotive</text>
+      <text x="90" y="206" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">WWR · Himalayas · Adzuna</text>
+      <text x="90" y="225" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="700" text-anchor="middle">scout_local.ts</text>
+
+      <!-- Scraper -->
+      <rect x="235" y="153" width="150" height="82" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="310" y="171" font-family="Space Grotesk,sans-serif" font-size="9.5" font-weight="700" fill="#0a0d18" text-anchor="middle">Scraper</text>
+      <text x="310" y="186" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Fetches full JD text</text>
+      <text x="310" y="197" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Backfills missing URLs</text>
+      <text x="310" y="225" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="700" text-anchor="middle">scrape_new_jobs.ts</text>
+
+      <!-- Python Pipeline -->
+      <rect x="455" y="153" width="200" height="82" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="555" y="171" font-family="Space Grotesk,sans-serif" font-size="9.5" font-weight="700" fill="#0a0d18" text-anchor="middle">Python Pipeline</text>
+      <text x="555" y="185" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Score · Draft · Research</text>
+      <text x="555" y="196" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">PDF Compile (Playwright)</text>
+      <text x="555" y="225" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="700" text-anchor="middle">batch_pipeline.py</text>
+
+      <!-- Sequential arrows -->
+      <line x1="165" y1="194" x2="232" y2="194" stroke="#0D9488" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+      <polygon points="230,190 238,194 230,198" fill="#0D9488" opacity="0.6"/>
+      <line x1="385" y1="194" x2="452" y2="194" stroke="#0D9488" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+      <polygon points="450,190 458,194 450,198" fill="#0D9488" opacity="0.6"/>
+
+      <text x="340" y="255" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Stages run sequentially via on('close') callbacks — scout must finish before scraper starts</text>
+    </svg>
+    <div class="diagram-label">System Architecture · Applyr v5.17 · server/index.ts now 33 lines after May 2026 router split</div>
+
+    <hr class="divider">
+    <div class="section-title">Why Not a SaaS Tool?</div>
+    <p>LinkedIn Easy Apply produces generic applications. Resume builders require manual per-role editing. Commercial AI tools like Teal and Rezi are subscription SaaS — they send your career data to their servers, and don't integrate scouting with drafting into one pipeline.</p>
+    <p>Applyr is local-first. All career data stays on disk. The only data sent externally is what you explicitly configure: JD text to LLMs for scoring, company names to research APIs. No account, no subscription, no shared infrastructure.</p>
+
+    <div class="callout">
+      <div class="callout-label">Primary Value</div>
+      <p>A user with a configured profile can go from "scout triggered" to "PDF-ready tailored application" with zero manual effort per job. The pipeline handles sourcing, filtering, and drafting — the user handles judgment and review.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CHAPTER 2 — CONSTRAINTS & DECISIONS
+══════════════════════════════════════ -->
+<section class="book-section chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 02</div>
+    <h2 class="chapter-title">Constraints &amp; Decisions</h2>
+    <p class="chapter-lead">Every architectural choice is a trade-off. These eight decisions define the shape of the system — and the boundaries it can never cross.</p>
+  </div>
+
+  <div class="chapter-body">
+    <div class="section-title">Constraint Profile</div>
+    <p>The system was built under hard constraints: one user, local machine only, career data that must never leave the device, free-tier LLM APIs, and no background in job queuing or stream processing.</p>
+
+    <table class="schema-table" style="margin-bottom:2rem">
+      <thead>
+        <tr><th>Constraint</th><th>Impact on Design</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Single user, local-only</td><td>SQLite instead of PostgreSQL — zero ops overhead, synchronous API fits Express handlers cleanly</td></tr>
+        <tr><td>Career data privacy</td><td>No auth, no sessions, no cloud hosting — localhost only, data never leaves disk except explicit API calls</td></tr>
+        <tr><td>Free-tier LLM cost</td><td>Two-stage scoring (keyword gate first), JD truncation at 1500 chars, summary-based evaluation</td></tr>
+        <tr><td>No queue system knowledge</td><td>Sequential on('close') chaining in scout.ts — simpler but no parallelism or retry isolation per stage</td></tr>
+        <tr><td>Python for LLM/PDF work</td><td>spawn() child processes instead of inline Node.js — all Python scripts run as detached children</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">The Eight Key Decisions</div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #1</div>
+      <div class="decision-title">Local-First Architecture</div>
+      <div class="decision-body">Cloud SaaS was rejected because career data is sensitive intelligence. Electron was rejected for bundle weight. The chosen path: Express + React served locally — zero packaging complexity, full filesystem access, privacy guaranteed. The target user is a technical job seeker who can clone a repo.</div>
+      <div class="decision-tradeoff">Trade-off accepted: Non-technical users cannot use this. No mobile. No multi-device access.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #2</div>
+      <div class="decision-title">SQLite via better-sqlite3</div>
+      <div class="decision-body">PostgreSQL requires a running service and connection pooling — overkill for one user. better-sqlite3's synchronous API was the tipping point: Express route handlers that do db.prepare(...).run() are cleaner than async/await chains. The single-user constraint meant write contention was never a concern.</div>
+      <div class="decision-tradeoff">Trade-off accepted: No concurrent write safety, file-level locking, not portable to multi-user.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #3</div>
+      <div class="decision-title">Python Pipeline as Spawned Child Process</div>
+      <div class="decision-body">All LLM orchestration, PDF compilation, and document drafting runs as Python — not because Node.js couldn't do it, but because all the code already existed in Python. Stdout capture with [LOG]/[FOUND]/[DONE] prefix conventions gives real-time log streaming to the UI without WebSockets.</div>
+      <div class="decision-tradeoff">Trade-off accepted: Stdout parsing is fragile. No mid-run cancellation. Exit code is the only reliable error signal.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #4 — ADR-005</div>
+      <div class="decision-title">Materialized JSON for Pipeline Config</div>
+      <div class="decision-body">Python can't easily read SQLite without a connection. The solution: the Express server writes data/candidate_preferences.json whenever settings change. Python reads this file. SQLite is the source of truth; the JSON is a projection. The write lives in materializeJobSearchPrefs() in server/shared.ts.</div>
+      <div class="decision-tradeoff">Trade-off accepted: Two sources of truth. Drift risk if server crashes mid-write.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #5 — CR-006</div>
+      <div class="decision-title">LLM Provider Fallback Chain</div>
+      <div class="decision-body">A single-provider design meant any rate limit or outage silently killed the pipeline. The fix: call_llm() checks which providers are configured, orders them primary-first, and iterates. Non-rate-limit errors skip to the next provider. Rate limits retry within the same provider with escalating waits.</div>
+      <div class="decision-tradeoff">Trade-off accepted: A job might be scored by Gemini and a second by Claude in the same batch run, producing inconsistent scoring.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #6</div>
+      <div class="decision-title">Proof Code Anti-Hallucination System</div>
+      <div class="decision-body">Telling an LLM "only use facts from this document" is reliably ignored under token pressure. The structural fix: every claim in workExperience.md gets a stable code (ACC-101, VOC-01, MET-03). Drafting prompts require every claim to cite a code. If no code exists, the claim cannot be made. Implemented in codifyExperienceAndAssignIDs() in server/routes/profile.ts.</div>
+      <div class="decision-tradeoff">Trade-off accepted: User must invest time codifying their experience before the pipeline produces useful output.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #7</div>
+      <div class="decision-title">Two-Stage Scoring (Zero-Token Gate + LLM)</div>
+      <div class="decision-body">A 50-job batch with LLM scoring on every job would cost 50 API calls. In practice, ~70% of jobs are obvious rejects (wrong title, wrong seniority). A deterministic keyword gate runs first — zero tokens, zero cost — and eliminates the noise. The LLM only evaluates jobs that pass the gate. Implemented in passes_jd_keyword_gate() in batch_pipeline.py.</div>
+      <div class="decision-tradeoff">Trade-off accepted: False negative risk at the gate layer. A role with an unusual title may be wrongly rejected.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Decision #8 — May 2026</div>
+      <div class="decision-title">Modular Express Router Architecture</div>
+      <div class="decision-body">server/index.ts had grown to 844 lines containing all 24 routes, four helper functions, and business logic. A duplicate copy of the API key-reading logic existed in scout.ts. The refactor split all routes by domain into server/routes/ (system, jobs, profile, pipeline) and extracted shared utilities into server/shared.ts. index.ts is now 33 lines — middleware setup and router mounts only. The refactor also fixed a latent bug: /api/jobs/:id/draft was missing buildPythonEnv(), so manual draft triggers never had API keys injected.</div>
+      <div class="decision-tradeoff">Trade-off accepted: Five files to open instead of one when debugging an unfamiliar route. Mitigated by naming that makes the domain obvious.</div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">The Scoring Funnel</div>
+
+    <!-- Two-stage scoring funnel SVG -->
+    <svg viewBox="0 0 680 185" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;margin:1.25rem 0">
+      <rect width="680" height="185" fill="#f7f4ef"/>
+
+      <!-- Stage 1 -->
+      <rect x="20" y="18" width="155" height="118" rx="3" fill="#e8e4de"/>
+      <text x="97" y="44" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="#718096" text-anchor="middle" letter-spacing="0.1em">ALL DISCOVERED</text>
+      <text x="97" y="76" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="#0a0d18" text-anchor="middle">50–100</text>
+      <text x="97" y="95" font-family="Space Grotesk,sans-serif" font-size="8" fill="#718096" text-anchor="middle">jobs per scout run</text>
+      <rect x="20" y="104" width="155" height="32" rx="0 0 3 3" fill="rgba(13,148,136,0.1)"/>
+      <text x="97" y="122" font-family="Space Grotesk,sans-serif" font-size="8" fill="#0D9488" font-weight="700" text-anchor="middle">100% baseline</text>
+      <text x="97" y="134" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">zero cost</text>
+
+      <!-- Gate arrow 1 -->
+      <rect x="190" y="58" width="100" height="40" rx="3" fill="#0a0d18"/>
+      <text x="240" y="74" font-family="Space Grotesk,sans-serif" font-size="8.5" font-weight="700" fill="white" text-anchor="middle">Keyword Gate</text>
+      <text x="240" y="86" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">zero-token filter</text>
+      <line x1="175" y1="77" x2="190" y2="77" stroke="#718096" stroke-width="1"/>
+      <line x1="290" y1="77" x2="305" y2="77" stroke="#718096" stroke-width="1"/>
+      <polygon points="305,73 313,77 305,81" fill="#718096"/>
+      <text x="240" y="112" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="600" text-anchor="middle">FREE</text>
+      <text x="240" y="124" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096" text-anchor="middle">~70% rejected here</text>
+
+      <!-- Stage 2 -->
+      <rect x="315" y="38" width="140" height="90" rx="3" fill="#e8e4de"/>
+      <text x="385" y="62" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="#718096" text-anchor="middle" letter-spacing="0.1em">KEYWORD PASS</text>
+      <text x="385" y="90" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="800" fill="#0a0d18" text-anchor="middle">~30</text>
+      <text x="385" y="107" font-family="Space Grotesk,sans-serif" font-size="8" fill="#718096" text-anchor="middle">go to LLM scoring</text>
+      <rect x="315" y="100" width="140" height="28" rx="0 0 3 3" fill="rgba(13,148,136,0.15)"/>
+      <text x="385" y="118" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="700" text-anchor="middle">~$0.009 per batch</text>
+
+      <!-- Gate arrow 2 -->
+      <rect x="472" y="58" width="95" height="40" rx="3" fill="#0a0d18"/>
+      <text x="519" y="74" font-family="Space Grotesk,sans-serif" font-size="8.5" font-weight="700" fill="white" text-anchor="middle">LLM Scoring</text>
+      <text x="519" y="86" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" text-anchor="middle">fit evaluation</text>
+      <line x1="455" y1="77" x2="472" y2="77" stroke="#718096" stroke-width="1"/>
+      <line x1="567" y1="77" x2="582" y2="77" stroke="#718096" stroke-width="1"/>
+      <polygon points="582,73 590,77 582,81" fill="#718096"/>
+      <text x="519" y="112" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#0D9488" font-weight="600" text-anchor="middle">~$0.003 each</text>
+      <text x="519" y="124" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096" text-anchor="middle">~70% rejected here</text>
+
+      <!-- Stage 3 -->
+      <rect x="592" y="55" width="70" height="55" rx="3" fill="#0D9488"/>
+      <text x="627" y="76" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="white" text-anchor="middle" letter-spacing="0.08em">QUALIFIED</text>
+      <text x="627" y="94" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="800" fill="white" text-anchor="middle">5–10</text>
+      <text x="627" y="106" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.7)" text-anchor="middle">full assets</text>
+
+      <text x="97"  y="170" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">scout_local.ts</text>
+      <text x="385" y="170" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">passes_jd_keyword_gate()</text>
+      <text x="519" y="170" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">evaluate_job_fit()</text>
+      <text x="627" y="170" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">drafting_engine.py</text>
+    </svg>
+    <div class="diagram-label">Two-Stage Scoring Funnel — token cost proportional to signal quality</div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CHAPTER 3 — THE PIPELINE
+══════════════════════════════════════ -->
+<section class="book-section chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 03</div>
+    <h2 class="chapter-title">The Pipeline</h2>
+    <p class="chapter-lead">Four sequential stages, each spawned as a child process. Scout discovers. Scraper fetches. Pipeline scores and drafts. All chained via on('close') callbacks from server/scout.ts.</p>
+  </div>
+
+  <div class="chapter-body">
+    <div class="section-title">Scout Pipeline — End to End</div>
+
+    <!-- Scout sequence SVG -->
+    <svg viewBox="0 0 680 195" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;margin:1.25rem 0">
+      <rect width="680" height="195" fill="#f7f4ef"/>
+
+      <rect x="10" y="70" width="100" height="52" rx="3" fill="#0a0d18"/>
+      <text x="60" y="90" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="white" text-anchor="middle">POST</text>
+      <text x="60" y="102" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="white" text-anchor="middle">/api/sync</text>
+      <text x="60" y="115" font-family="Space Grotesk,sans-serif" font-size="7" fill="#0D9488" text-anchor="middle">routes/pipeline.ts</text>
+
+      <line x1="110" y1="96" x2="128" y2="96" stroke="#718096" stroke-width="1.2"/>
+      <polygon points="128,92 136,96 128,100" fill="#718096"/>
+
+      <rect x="136" y="58" width="108" height="76" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="190" y="77" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#0a0d18" text-anchor="middle">Scout TS</text>
+      <text x="190" y="90" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">7 sources</text>
+      <text x="190" y="101" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">INSERT OR IGNORE</text>
+      <text x="190" y="112" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">URL dedup</text>
+      <text x="190" y="125" font-family="Space Grotesk,sans-serif" font-size="7" fill="#0D9488" font-weight="700" text-anchor="middle">5–10 min</text>
+
+      <line x1="244" y1="96" x2="260" y2="96" stroke="#718096" stroke-width="1.2"/>
+      <polygon points="260,92 268,96 260,100" fill="#718096"/>
+      <text x="252" y="90" font-family="Space Grotesk,sans-serif" font-size="6.5" fill="#718096" text-anchor="middle">on('close')</text>
+
+      <rect x="268" y="70" width="100" height="52" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="318" y="89" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#0a0d18" text-anchor="middle">Backfill TS</text>
+      <text x="318" y="102" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">fills missing URLs</text>
+      <text x="318" y="114" font-family="Space Grotesk,sans-serif" font-size="7" fill="#0D9488" font-weight="700" text-anchor="middle">1–2 min</text>
+
+      <line x1="368" y1="96" x2="384" y2="96" stroke="#718096" stroke-width="1.2"/>
+      <polygon points="384,92 392,96 384,100" fill="#718096"/>
+      <text x="376" y="90" font-family="Space Grotesk,sans-serif" font-size="6.5" fill="#718096" text-anchor="middle">on('close')</text>
+
+      <rect x="392" y="70" width="100" height="52" rx="3" fill="#f0ece6" stroke="#0D9488" stroke-width="1.5"/>
+      <text x="442" y="89" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#0a0d18" text-anchor="middle">Scraper TS</text>
+      <text x="442" y="102" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">fetches JD text</text>
+      <text x="442" y="114" font-family="Space Grotesk,sans-serif" font-size="7" fill="#0D9488" font-weight="700" text-anchor="middle">2–5 min</text>
+
+      <line x1="492" y1="96" x2="508" y2="96" stroke="#718096" stroke-width="1.2"/>
+      <polygon points="508,92 516,96 508,100" fill="#718096"/>
+      <text x="500" y="90" font-family="Space Grotesk,sans-serif" font-size="6.5" fill="#718096" text-anchor="middle">on('close')</text>
+
+      <rect x="516" y="55" width="118" height="82" rx="3" fill="#0D9488"/>
+      <text x="575" y="76" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle">Python Pipeline</text>
+      <text x="575" y="90" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.8)" text-anchor="middle">score → draft</text>
+      <text x="575" y="101" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.8)" text-anchor="middle">research → PDF</text>
+      <text x="575" y="112" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.8)" text-anchor="middle">3 docs per job</text>
+      <text x="575" y="127" font-family="Space Grotesk,sans-serif" font-size="7" fill="rgba(255,255,255,0.65)" font-weight="700" text-anchor="middle">5–15 min</text>
+
+      <text x="60"  y="22" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Trigger</text>
+      <text x="190" y="22" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Discover</text>
+      <text x="318" y="22" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Enrich</text>
+      <text x="442" y="22" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Fetch Text</text>
+      <text x="575" y="22" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Generate</text>
+
+      <rect x="10"  y="158" width="630" height="6" rx="3" fill="#e8e4de"/>
+      <rect x="10"  y="158" width="210" height="6" rx="3" fill="#0D9488" opacity="0.35"/>
+      <rect x="220" y="158" width="50"  height="6" fill="#0D9488" opacity="0.45"/>
+      <rect x="270" y="158" width="130" height="6" fill="#0D9488" opacity="0.55"/>
+      <rect x="400" y="158" width="240" height="6" rx="0 3 3 0" fill="#0D9488"/>
+      <text x="10"  y="178" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096">0 min</text>
+      <text x="320" y="178" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096" text-anchor="middle">~10 min</text>
+      <text x="640" y="178" font-family="Space Grotesk,sans-serif" font-size="7" fill="#718096" text-anchor="end">~20 min</text>
+    </svg>
+    <div class="diagram-label">Scout Pipeline Sequence — total runtime 10–20 minutes, runs unattended</div>
+
+    <hr class="divider">
+    <div class="section-title">Data Schema</div>
+    <p>Three core tables. <strong>jobs</strong> is the canonical record of every discovered opportunity. <strong>profiles</strong> is a key-value store for all user configuration. <strong>activity_log</strong> is the append-only event log that drives the terminal view in the UI.</p>
+
+    <table class="schema-table">
+      <thead>
+        <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>id</td><td>TEXT PK</td><td>UUID — randomUUID() on insert in server/routes/jobs.ts</td></tr>
+        <tr><td>url</td><td>TEXT UNIQUE</td><td>The deduplication key — INSERT OR IGNORE means the same URL never creates a duplicate</td></tr>
+        <tr><td>score</td><td>INTEGER</td><td>0-100 LLM fit score; NULL before evaluation</td></tr>
+        <tr><td>status</td><td>TEXT</td><td>Lifecycle stage: Drafted → Evaluating → Applied → Closed</td></tr>
+        <tr><td>source_site</td><td>TEXT</td><td>Which scout source found this job (LinkedIn, Himalayas, etc.)</td></tr>
+        <tr><td>salary_range</td><td>TEXT</td><td>Freeform string — scraped salary varies wildly ("$120k-$150k", "DOE", "Competitive")</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">The Proof Code System</div>
+    <p>Every claim in <code>workExperience.md</code> gets a stable code: <strong>ACC-101</strong> for accomplishments, <strong>VOC-01</strong> for vocabulary/tools, <strong>MET-03</strong> for metrics. Section 5.N maps to ID range N×100+1 through (N+1)×100 — so multiple employer sections never produce collisions.</p>
+    <p>The <code>codifyExperienceAndAssignIDs()</code> function lives in <code>server/routes/profile.ts</code> (moved from server/index.ts during the May 2026 router refactor). It scans existing IDs on every save to seed counters above current maxima — preventing collisions when a user resaves an already-codified document.</p>
+
+    <div class="callout">
+      <div class="callout-label">Why This Works</div>
+      <p>Structural constraints are more reliable than prompt constraints. Telling an LLM "only use facts from this document" is routinely ignored under token pressure. Requiring a valid code in every claim makes hallucination structurally impossible — if no code exists for a claim, the claim cannot appear in the output.</p>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">WYSIWYG Document Editor</div>
+    <p>Users open a PDF asset from the job detail panel. A full-screen overlay shows the PDF preview on the left and a rich-text Markdown editor on the right. On save, the pipeline runs <code>style_compliance_guard.py</code> then <code>compile_single.py</code> (Playwright headless Chromium) to regenerate the PDF. Route handler lives in <code>server/routes/jobs.ts</code>. An AI rewrite field routes through <code>scripts/ai_rewrite.py</code>.</p>
+    <p>The known failure mode on Windows: Playwright can't find the Chromium executable. Fix: <code>npx playwright install chromium</code> (Node) and <code>playwright install chromium</code> (Python) — both runtimes need separate installs.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CHAPTER 4 — THE LLM LAYER
+══════════════════════════════════════ -->
+<section class="book-section chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 04</div>
+    <h2 class="chapter-title">The LLM Layer</h2>
+    <p class="chapter-lead">Five distinct use cases. One fallback chain. A total monthly cost under $0.15 — usually $0 on Gemini Flash's free tier.</p>
+  </div>
+
+  <div class="chapter-body">
+    <div class="section-title">Where LLMs Are Used</div>
+
+    <div class="llm-case">
+      <div class="llm-num">01</div>
+      <div>
+        <div class="llm-name">Job Fit Scoring</div>
+        <p class="llm-desc">evaluate_job_fit() in batch_pipeline.py. Inputs: candidate preferences + workExperience_summary.md + truncated JD (1500 chars) + job_fit_engine.md rules. Outputs JSON: Decision, Score, Confidence, Summary, TopFitReasons, RiskFlags. response_mime_type="application/json" forces JSON output on Gemini.</p>
+        <div class="llm-cost">~3,000–4,000 input tokens · ~$0.0003/call · 15 calls/batch ≈ $0.005</div>
+      </div>
+    </div>
+
+    <div class="llm-case">
+      <div class="llm-num">02</div>
+      <div>
+        <div class="llm-name">Asset Drafting</div>
+        <p class="llm-desc">drafting_engine.py. Inputs: full workExperience.md + JD + company research + resume template + cover letter reference + style guides + claim verifier rules. Outputs: tailored resume Markdown + cover letter Markdown. Every claim must cite a proof code — no code, no claim.</p>
+        <div class="llm-cost">~8,000–15,000 input tokens · ~$0.002/job · 5 qualified/batch ≈ $0.01</div>
+      </div>
+    </div>
+
+    <div class="llm-case">
+      <div class="llm-num">03</div>
+      <div>
+        <div class="llm-name">Company Research</div>
+        <p class="llm-desc">research-engine.py. Uses Perplexity sonar-pro if configured (web-grounded), else falls back to Gemini with tools=[{"google_search": {}}] for grounding. Outputs a structured Research Packet: mission, financials, competitors, culture, recent news. When falling back to Claude, the tools parameter is intentionally dropped — quality degrades but the pipeline continues.</p>
+        <div class="llm-cost">Per qualified job · Perplexity preferred for web grounding</div>
+      </div>
+    </div>
+
+    <div class="llm-case">
+      <div class="llm-num">04</div>
+      <div>
+        <div class="llm-name">Experience Summary Generation</div>
+        <p class="llm-desc">generate_experience_summary.py. Runs as a detached background process after every experience save. Inputs the full workExperience.md and outputs a condensed workExperience_summary.md (~400–600 words). This summary is used for LLM scoring instead of the full file — reducing scoring token cost by ~80% for rejected jobs.</p>
+        <div class="llm-cost">Background, on-save · ~$0.001 per generation</div>
+      </div>
+    </div>
+
+    <div class="llm-case">
+      <div class="llm-num">05</div>
+      <div>
+        <div class="llm-name">AI Document Rewrite</div>
+        <p class="llm-desc">ai_rewrite.py. On-demand, user-triggered from the WYSIWYG editor. Accepts a natural language instruction + current document text, returns a rewritten version. Route handler in server/routes/jobs.ts writes instruction and text to scratch/ tmp files, spawns the script, captures stdout as the rewritten content.</p>
+        <div class="llm-cost">On-demand · ~$0.001–0.003 per rewrite</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">Provider Fallback Chain</div>
+    <p>call_llm() checks which providers have valid API keys configured, orders them with the user's primary choice first, then iterates. A None return means "this provider failed non-fatally, try next." A string — even empty — means "this provider responded, use this result."</p>
+
+    <!-- LLM Fallback Chain SVG -->
+    <svg viewBox="0 0 680 145" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;margin:1.25rem 0">
+      <rect width="680" height="145" fill="#f7f4ef"/>
+
+      <rect x="20" y="22" width="138" height="65" rx="3" fill="#0a0d18" stroke="#0D9488" stroke-width="2"/>
+      <text x="89" y="44" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">Gemini</text>
+      <text x="89" y="58" font-family="Space Grotesk,sans-serif" font-size="8" fill="#0D9488" text-anchor="middle">gemini-2.5-flash</text>
+      <text x="89" y="72" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.5)" text-anchor="middle">JSON MIME · free tier</text>
+      <rect x="20" y="97" width="138" height="20" rx="2" fill="#0D9488"/>
+      <text x="89" y="111" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="white" text-anchor="middle">PRIMARY</text>
+
+      <line x1="158" y1="54" x2="190" y2="54" stroke="#718096" stroke-width="1" stroke-dasharray="4,3"/>
+      <polygon points="188,50 196,54 188,58" fill="#718096"/>
+      <text x="174" y="47" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">fallback</text>
+
+      <rect x="196" y="30" width="138" height="57" rx="3" fill="#1a2535" stroke="#e2ddd6" stroke-width="1.5"/>
+      <text x="265" y="52" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">Claude</text>
+      <text x="265" y="65" font-family="Space Grotesk,sans-serif" font-size="8" fill="#99f6e4" text-anchor="middle">claude-sonnet</text>
+      <text x="265" y="78" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.4)" text-anchor="middle">no tools param</text>
+      <rect x="196" y="97" width="138" height="20" rx="2" fill="#2d3748"/>
+      <text x="265" y="111" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,0.6)" text-anchor="middle">FALLBACK 1</text>
+
+      <line x1="334" y1="54" x2="366" y2="54" stroke="#718096" stroke-width="1" stroke-dasharray="4,3"/>
+      <polygon points="364,50 372,54 364,58" fill="#718096"/>
+      <text x="350" y="47" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">fallback</text>
+
+      <rect x="372" y="30" width="138" height="57" rx="3" fill="#1a2535" stroke="#e2ddd6" stroke-width="1.5"/>
+      <text x="441" y="52" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">Local</text>
+      <text x="441" y="65" font-family="Space Grotesk,sans-serif" font-size="8" fill="#99f6e4" text-anchor="middle">ollama / LM Studio</text>
+      <text x="441" y="78" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.4)" text-anchor="middle">no web grounding</text>
+      <rect x="372" y="97" width="138" height="20" rx="2" fill="#2d3748"/>
+      <text x="441" y="111" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,0.6)" text-anchor="middle">FALLBACK 2</text>
+
+      <line x1="510" y1="54" x2="542" y2="54" stroke="#718096" stroke-width="1" stroke-dasharray="4,3"/>
+      <polygon points="540,50 548,54 540,58" fill="#718096"/>
+      <text x="526" y="47" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">fallback</text>
+
+      <rect x="548" y="30" width="115" height="57" rx="3" fill="#1a2535" stroke="#e2ddd6" stroke-width="1.5"/>
+      <text x="605" y="52" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">Perplexity</text>
+      <text x="605" y="65" font-family="Space Grotesk,sans-serif" font-size="8" fill="#99f6e4" text-anchor="middle">sonar-pro</text>
+      <text x="605" y="78" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="rgba(255,255,255,0.4)" text-anchor="middle">research only</text>
+      <rect x="548" y="97" width="115" height="20" rx="2" fill="#2d3748"/>
+      <text x="605" y="111" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,0.6)" text-anchor="middle">FALLBACK 3</text>
+
+      <text x="340" y="136" font-family="Space Grotesk,sans-serif" font-size="7.5" fill="#718096" text-anchor="middle">Return None → try next · Return str (even "") → use result · All fail → return "" and log error</text>
+    </svg>
+    <div class="diagram-label">LLM Provider Fallback Chain — _get_configured_providers() in scripts/utils.py</div>
+
+    <hr class="divider">
+    <div class="section-title">Prompt Engineering Decisions</div>
+    <p>The scoring prompt injects the job_fit_engine.md rules file verbatim rather than summarizing it. This was an intentional choice — the rules are nuanced and any compression risks losing important scoring criteria.</p>
+
+    <div class="callout">
+      <div class="callout-label">What Failed First</div>
+      <p>An earlier prompt that asked the LLM to "evaluate fit holistically" produced inconsistent score distributions. Adding the explicit job_fit_engine.md rules file and specifying the exact JSON schema improved consistency dramatically. The key shift: replace natural language instructions with structural constraints wherever possible.</p>
+    </div>
+
+    <p>A notable abstraction gap: the job_fit_engine.md rules file governs scoring behavior but has no UI. Changes to the user's blocklist in Settings update candidate_preferences.json — but the LLM scoring rules remain static. They're "configuration" that is really a prompt component, and should be versioned and tested with the same rigor as actual code.</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     CHAPTER 5 — LESSONS & DEBT
+══════════════════════════════════════ -->
+<section class="book-section chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 05</div>
+    <h2 class="chapter-title">Lessons &amp; Debt</h2>
+    <p class="chapter-lead">What was intentional, what was accidental, what calcified into load-bearing infrastructure, and what needs to change first.</p>
+  </div>
+
+  <div class="chapter-body">
+    <div class="section-title">Accidental vs. Intentional Decisions</div>
+
+    <div class="antipattern">
+      <div class="antipattern-header">
+        <span class="antipattern-tag tag-resolved">Resolved — May 2026</span>
+        <span class="antipattern-name">844-Line God File (server/index.ts)</span>
+      </div>
+      <div class="antipattern-body">
+        <p>Started as a small Express server and grew feature by feature with no controller extraction. All 24 routes, codifyExperienceAndAssignIDs(), materializeJobSearchPrefs(), buildPythonEnv(), and more lived in one file. scout.ts had a duplicate copy of the key-reading logic. Hard to navigate; no separation between HTTP transport and business logic.</p>
+        <p><strong>Resolution:</strong> Extracted to server/routes/ (system, jobs, profile, pipeline) + server/shared.ts for path constants and shared utilities. index.ts is now 33 lines — middleware setup and router mounts only. The refactor also fixed a latent bug: /api/jobs/:id/draft was missing buildPythonEnv(), so manual draft triggers never had API keys injected.</p>
+      </div>
+    </div>
+
+    <div class="antipattern">
+      <div class="antipattern-header">
+        <span class="antipattern-tag tag-active">Active</span>
+        <span class="antipattern-name">Callback Pyramid — Pipeline Chaining</span>
+      </div>
+      <div class="antipattern-body">
+        <p>server/scout.ts chains four process spawns via nested on('close') callbacks, four levels deep (lines 71–157). This is semantically correct but creates code that is impossible to add retry logic to, and very hard to add error recovery to individual stages.</p>
+        <p><strong>Fix path:</strong> A simple SQLite-backed job queue, or convert to an async generator pattern. The boundary is already clear — execution is the blocker.</p>
+      </div>
+    </div>
+
+    <div class="antipattern">
+      <div class="antipattern-header">
+        <span class="antipattern-tag tag-active">Active</span>
+        <span class="antipattern-name">Filesystem as Message Queue (jobs/ directory)</span>
+      </div>
+      <div class="antipattern-body">
+        <p>scout_local.ts writes JD text to jobs/{company}.txt. batch_pipeline.py reads via glob.glob. Files are never cleaned up — stale text from old scout runs persists indefinitely and may be re-processed. No ordering guarantee. No atomic writes.</p>
+        <p><strong>Fix path:</strong> Clean up processed files after each pipeline run, or store JD text directly in SQLite (an additional TEXT column on the jobs table).</p>
+      </div>
+    </div>
+
+    <div class="antipattern">
+      <div class="antipattern-header">
+        <span class="antipattern-tag tag-active">Active</span>
+        <span class="antipattern-name">No Schema Migrations</span>
+      </div>
+      <div class="antipattern-body">
+        <p>Schema is defined as CREATE TABLE IF NOT EXISTS in server/db.ts — idempotent on boot, but doesn't handle column additions. Every schema change requires a manual ALTER TABLE or dropping and rebuilding the database. Acceptable for a solo developer who is also the user; a hard blocker for any public distribution.</p>
+        <p><strong>Fix path:</strong> Add a schema_version table and run numbered migration scripts on boot. Trivial to add now, painful after a user base exists.</p>
+      </div>
+    </div>
+
+    <div class="antipattern">
+      <div class="antipattern-header">
+        <span class="antipattern-tag tag-active">Active</span>
+        <span class="antipattern-name">Stdout Prefix Parsing as IPC Protocol</span>
+      </div>
+      <div class="antipattern-body">
+        <p>Python scripts communicate progress via print() with prefix conventions: [LOG], [FOUND], [REJECT], [ACTION], [DONE]. server/scout.ts parses these line-by-line. It works but is fragile — any stray print() that doesn't follow the convention is silently misinterpreted.</p>
+        <p><strong>Fix path:</strong> Replace with newline-delimited JSON from Python. One JSON object per line, server JSON.parse()s each. Type-safe, structured, eliminates the prefix convention entirely.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">Technical Debt Priority Log</div>
+
+    <table class="debt-table">
+      <thead>
+        <tr><th>Item</th><th>Impact</th><th>Priority</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>No schema migration system</td>
+          <td>Schema changes break existing installs silently</td>
+          <td><span class="badge badge-critical">Critical</span></td>
+          <td>Medium</td>
+        </tr>
+        <tr>
+          <td>jobs/ directory never cleaned</td>
+          <td>Grows unboundedly; stale files re-processed</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td>Low</td>
+        </tr>
+        <tr>
+          <td>activity_log never pruned</td>
+          <td>Query performance degrades over months of use</td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td>Low</td>
+        </tr>
+        <tr>
+          <td>Pipeline chaining via callbacks</td>
+          <td>No retry, no cancellation, hard to modify</td>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td>High</td>
+        </tr>
+        <tr>
+          <td>server/index.ts monolith</td>
+          <td>Developer experience, duplicate logic, latent bug</td>
+          <td><span class="badge badge-resolved">Resolved</span></td>
+          <td>Refactored May 2026 → server/routes/ + shared.ts</td>
+        </tr>
+        <tr>
+          <td>No automated tests</td>
+          <td>Regressions are invisible until a real scout run</td>
+          <td><span class="badge badge-high">High</span></td>
+          <td>Ongoing</td>
+        </tr>
+        <tr>
+          <td>scripts/scratch/ not gitignored</td>
+          <td>Debug scripts accidentally committed</td>
+          <td><span class="badge badge-resolved">Resolved</span></td>
+          <td>Added scratch/ rule to .gitignore</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pull-quote">"Three intentional decisions differentiate Applyr from vibe-coding: the proof code system, the materialized JSON projection, and the LLM fallback chain. Everything else was grown, not designed."</div>
+
+    <div class="section-title">Refactoring Roadmap</div>
+
+    <div class="decision-card">
+      <div class="decision-label">Phase 1 — Critical for Robustness</div>
+      <div class="decision-title">Schema migrations · jobs/ cleanup · activity_log LIMIT · JSON streaming</div>
+      <div class="decision-body">Add a schema_version table and run numbered migration scripts on boot. Clean up processed job text files after each pipeline run. Add LIMIT to activity_log queries and a periodic DELETE for old entries. Replace stdout prefix parsing with newline-delimited JSON from Python.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Phase 2 — Important for Reliability</div>
+      <div class="decision-title">Lightweight job queue · per-job LLM timeout · structured LLM logging</div>
+      <div class="decision-body">Introduce a SQLite-backed queue for pipeline stages — even a simple one eliminates the callback pyramid and enables per-stage retry. Add a per-job LLM call timeout to prevent a single slow call from blocking the entire batch. Log token counts and provider used per LLM call.</div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-label">Phase 3 — Nice to Have</div>
+      <div class="decision-title">job_fit_engine.md UI · Playwright browser reuse</div>
+      <div class="decision-body">Build a UI for editing the scoring rules file — it's currently a prompt artifact with no UI surface, invisible to any user who isn't also the developer. (Note: the server/routes/ extraction from Phase 3 of the previous roadmap is now complete — resolved May 2026.) Implement Playwright browser pool/reuse across scout stages to reduce cold start overhead.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     END MATTER — KEY LEARNINGS
+══════════════════════════════════════ -->
+<section class="book-section end-matter">
+  <div class="chapter-num">End Matter</div>
+  <h2 class="chapter-title" style="margin-bottom:0.75rem">Key Learnings</h2>
+  <p>What a multi-month build teaches that a weekend project cannot.</p>
+
+  <hr class="divider">
+  <div class="section-title">Patterns Worth Keeping</div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Materialized View Pattern</div>
+    <p class="pattern-body">Write to SQLite (source of truth), then project to a JSON file that downstream consumers can read without DB knowledge. SQLite owns the write path; Python owns the read path. Implemented in materializeJobSearchPrefs() in server/shared.ts. This pattern is correct for any multi-runtime architecture where one runtime needs config from another.</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Structural Anti-Hallucination</div>
+    <p class="pattern-body">Proof codes work because they make hallucination structurally impossible, not just instruction-bound. The general principle: when you need an LLM to respect a constraint reliably, encode the constraint in the data structure rather than the prompt. "Only use facts from this document" is ignored. "Every claim must cite a code that exists in this document" is enforceable.</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Two-Stage Evaluation</div>
+    <p class="pattern-body">Zero-cost gate first, expensive gate second. In a 50-job batch, ~70% of jobs are eliminated by a deterministic keyword check before any LLM call. This pattern applies to any pipeline with a large input set and expensive evaluation: pre-filter with a cheap heuristic, then apply the expensive model only to candidates that pass.</p>
+  </div>
+
+  <div class="pattern-card">
+    <div class="pattern-title">Domain-Grouped Router Split</div>
+    <p class="pattern-body">When an Express server grows beyond ~200 lines, splitting by domain (system, jobs, profile, pipeline) with a shared utilities module is more useful than splitting by layer (controllers, services, routes). The domain split reflects how you actually debug and navigate the code; a layer split just moves the sprawl into more files.</p>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">Mistakes &amp; Lessons</div>
+
+  <div class="learning-grid">
+    <div class="learning-item">
+      <div class="learning-item-title">Build the IPC protocol first</div>
+      <p>The [LOG]/[FOUND] stdout prefix convention was a hack that became load-bearing. Defining a JSON streaming protocol from day one would have cost one hour and saved many debugging sessions. Anything that touches a process boundary deserves a schema.</p>
+    </div>
+    <div class="learning-item">
+      <div class="learning-item-title">Add migrations before the first schema change</div>
+      <p>SQLite ALTER TABLE is limited. Columns added after the fact require manual migrations or data loss. A migration table costs almost nothing to add at the start; it costs real effort to retrofit around a growing database.</p>
+    </div>
+    <div class="learning-item">
+      <div class="learning-item-title">Extract route handlers immediately</div>
+      <p>server/index.ts grew to 844 lines because each feature was "just one more route." The domain boundaries were always obvious — it just took the pain of a 844-line file to enforce them. The May 2026 refactor also uncovered a latent bug that had been invisible in the monolith.</p>
+    </div>
+    <div class="learning-item">
+      <div class="learning-item-title">Prompt engineering is code</div>
+      <p>job_fit_engine.md is a prompt component masquerading as a config file. Changes to it immediately change scoring behavior with no code change — which means it should be versioned, tested, and treated with the same rigor as actual code.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">What Would Be Built Differently</div>
+
+  <p>Start with a lightweight job queue (even a simple SQLite-backed one) for pipeline stages. Define a structured JSON streaming protocol for Python → Node communication from day one. Extract route handlers into domain modules immediately. Add a migration system before writing the first schema. Keep the proof code system, the two-stage scoring, the materialized JSON projection, SQLite, and the domain-grouped router pattern — those are all right for this architecture.</p>
+
+  <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center">
+    <span style="font-family:'Space Grotesk',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25)">Applyr · Technical Deep Dive</span>
+    <span style="font-family:'Space Grotesk',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25)">v5.17 · 2026 · 20 Parts</span>
+  </div>
+</section>
+
+</body>
+</html>

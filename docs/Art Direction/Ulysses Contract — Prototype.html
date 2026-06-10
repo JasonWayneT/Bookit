@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understanding Ulysses Pacts — Bookit</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── STYLE X SYSTEM VARIABLES ───────────────────────── */
+:root {
+  --paper:   #f7f4ef;
+  --white:   #ffffff;
+  --ink:     #1a1a24;
+  --ink-2:   #4b5060;
+  --ink-3:   #9ca3af;
+  --border:  #e2ddd6;
+  --dark:    #0a0d18;
+  --dark-2:  #111827;
+  /* Book accent — Bookit indigo */
+  --accent:  #3525CD;
+  --cyan:    #00BCD4;
+  --blue:    #005CE6;
+  --amber:   #F59E0B;
+  --green:   #43A047;
+  --red:     #E03C31;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.65;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ── BOOK COVER ─────────────────────────────────────── */
+.cover {
+  background: var(--dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.cover-illus {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0 2rem;
+}
+.cover-bottom { position: relative; }
+.cover-glow-1 {
+  position: absolute; top: -100px; right: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(53,37,205,0.3) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cover-glow-2 {
+  position: absolute; bottom: 10%; left: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,188,212,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cover-bookit {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.28em;
+  text-transform: uppercase; color: rgba(0,188,212,0.6); margin-bottom: 1rem;
+  position: relative;
+}
+.cover-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.8rem, 8vw, 5.5rem);
+  font-weight: 800; line-height: 1; letter-spacing: -0.04em;
+  color: #fff; position: relative; margin-bottom: 1.5rem;
+}
+.cover-subtitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem; font-weight: 500;
+  color: rgba(255,255,255,0.45); max-width: 420px;
+  margin-bottom: 3rem; line-height: 1.4;
+}
+.cover-rule { width: 40px; height: 3px; background: var(--accent); margin-bottom: 2rem; position: relative; }
+.cover-meta {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+}
+.cover-meta-label { font-size: 0.68rem; color: rgba(255,255,255,0.25); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── TABLE OF CONTENTS ──────────────────────────────── */
+.toc { padding: 4rem; border-bottom: 1px solid var(--border); }
+.toc-eyebrow {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.toc-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.toc h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem; font-weight: 700; letter-spacing: -0.025em;
+  margin-bottom: 2.5rem;
+}
+.toc-list { list-style: none; }
+.toc-item {
+  display: flex; align-items: baseline; gap: 1rem;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit;
+}
+.toc-item:first-child { border-top: 1px solid var(--border); }
+.toc-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem; font-weight: 700; color: var(--accent);
+  flex-shrink: 0; width: 28px;
+}
+.toc-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; flex: 1; }
+.toc-dots { flex: 1; border-bottom: 1px dotted var(--border); margin: 0 0.5rem; align-self: center; }
+.toc-pg { font-size: 0.75rem; color: var(--ink-3); flex-shrink: 0; }
+
+/* ── CHAPTER OPENER ─────────────────────────────────── */
+.ch-opener {
+  background: var(--dark);
+  padding: 3.5rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.ch-opener-bg-num {
+  position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%);
+  font-family: 'Space Grotesk', sans-serif; font-size: 9rem; font-weight: 800;
+  line-height: 1; color: rgba(255,255,255,0.05); letter-spacing: -0.05em;
+  user-select: none;
+}
+.ch-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(0,188,212,0.75); margin-bottom: 0.75rem;
+}
+.ch-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800; color: #fff; line-height: 1.05; letter-spacing: -0.03em;
+  max-width: 520px;
+}
+.ch-desc { font-size: 0.9rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; max-width: 440px; }
+
+/* ── CHAPTER BODY ───────────────────────────────────── */
+.ch-body { padding: 3.5rem 4rem; }
+
+/* Section heading within chapter */
+.s-head {
+  display: grid; grid-template-columns: auto 1fr; gap: 1.25rem;
+  align-items: baseline; margin-bottom: 1.5rem; margin-top: 3rem;
+}
+.s-head:first-child { margin-top: 0; }
+.s-head-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 4rem; font-weight: 800; line-height: 1;
+  letter-spacing: -0.05em; color: var(--accent); opacity: 0.12;
+  user-select: none;
+}
+.s-head h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700; letter-spacing: -0.025em; line-height: 1.1;
+}
+.s-head-sub {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 0.75rem; margin-top: 2rem; color: var(--ink);
+}
+.body-lg { font-size: 1.05rem; line-height: 1.7; color: var(--ink-2); margin-bottom: 1.25rem; }
+.body-p  { font-size: 1rem; line-height: 1.65; color: var(--ink-2); margin-bottom: 1.25rem; }
+
+/* Callout boxes */
+.callout {
+  border-left: 4px solid; border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem; margin: 1.5rem 0; background: var(--white);
+}
+.callout-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.35rem; }
+.callout p { font-size: 0.875rem; line-height: 1.55; color: var(--ink-2); }
+.c-concept { border-color: var(--accent); } .c-concept .callout-lbl { color: var(--accent); }
+.c-note    { border-color: var(--blue);   } .c-note    .callout-lbl { color: var(--blue);   }
+.c-warn    { border-color: var(--amber);  } .c-warn    .callout-lbl { color: var(--amber);  }
+.c-evid    { border-color: var(--green);  } .c-evid    .callout-lbl { color: var(--green);  }
+.c-crit    { border-color: var(--red);    } .c-crit    .callout-lbl { color: var(--red);    }
+
+/* Pull quote */
+.pull-q { padding: 1.75rem 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); margin: 2rem 0; }
+.pull-q-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink);
+}
+.pull-q-src { font-size: 0.72rem; color: var(--ink-3); margin-top: 0.65rem; letter-spacing: 0.05em; }
+
+/* Definition */
+.defn { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem; margin: 1.5rem 0; }
+.defn-term { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.defn-rule { width: 32px; height: 2px; background: var(--accent); margin-bottom: 0.6rem; }
+.defn p { font-size: 0.875rem; color: var(--ink-2); line-height: 1.55; }
+
+/* Key stats */
+.stat-grid { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 1.5rem 0; }
+.stat-cell { background: var(--white); padding: 1.75rem; text-align: center; }
+.stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: var(--accent);
+}
+.stat-lbl { font-size: 0.8rem; color: var(--ink-2); margin-top: 0.5rem; line-height: 1.4; }
+
+/* Section rule */
+.sec-rule { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* Chapter summary */
+.ch-summary { background: var(--dark); border-radius: 6px; padding: 2rem; margin-top: 3rem; }
+.summary-lbl { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(0,188,212,0.75); margin-bottom: 0.75rem; }
+.ch-summary ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.ch-summary li { font-size: 0.875rem; color: rgba(255,255,255,0.75); display: flex; gap: 0.75rem; align-items: baseline; }
+.ch-summary li::before { content: '—'; color: rgba(0,188,212,0.65); flex-shrink: 0; }
+
+/* Subsection header */
+.sub-head {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.25rem;
+}
+.sub-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Bold inline */
+strong { font-weight: 600; color: var(--ink); }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .cover, .toc, .ch-opener, .ch-body { padding: 2rem 1.5rem; }
+  .stat-grid { grid-template-columns: 1fr !important; }
+}
+
+@media print {
+  .ch-opener, .cover, .ch-summary { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ BOOKIT CHARACTER LIBRARY — Style X v1 ══════════════════════
+     CASTING MODEL: 10 permanent characters play different roles across all Bookit books.
+     Their identity (iris color, hair silhouette) never changes — only the costume does.
+     IRIS COLOR = CHARACTER DNA. Even in costume, eyes stay the character's signature color.
+
+     Usage: <use href="#char-rosa" x="0" y="0" width="60" height="130"/>
+     All share: teardrop head · almond eyes · 3-layer hair · skin #f0c898
+
+     CURRENT CAST (4 of 10 built):
+       #char-rosa   Rosa   · Indigo  #3525CD · Strategist · short angular swept hair
+       #char-kai    Kai    · Red     #E03C31 · Catalyst   · spiky energetic hair
+       #char-mira   Mira   · Amber   #F59E0B · Mentor     · auburn, partial updo
+       #char-sol    Sol    · Gray    #4b6280 · Crew       · short practical hair
+
+     ULYSSES STORY CASTING:
+       Kai   (Red)    plays Ulysses — naval/heroic costume
+       Rosa  (Indigo) plays The Siren — teal ocean costume, INDIGO eyes
+       Sol   (Gray)   plays Crew — simple nautical uniform
+       Mira  (Amber)  plays Circe — flowing robe costume
+     ═══════════════════════════════════════════════════════════════════════════════════ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+
+<!-- ─────────────────────────────────────────────────────────────
+     CHAR 01 · ROSA · The Strategist · Indigo #3525CD
+     Short dark hair swept right, indigo highlight. Determined expression.
+     Ulysses story: plays The Siren (teal costume, indigo eyes stay)
+     ───────────────────────────────────────────────────────────── -->
+<symbol id="char-rosa" viewBox="0 0 60 130">
+  <!-- Hair back layer -->
+  <path d="M 30,3 C 47,3 54,13 53,27 C 55,16 49,5 30,5 C 11,5 5,16 7,27 C 6,13 13,3 30,3" fill="#101828"/>
+  <!-- Head (teardrop: wide temples, tapered chin) -->
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <!-- Bangs (sweep right, 2 layers) -->
+  <path d="M 9,30 C 10,18 16,10 26,11 C 21,16 15,23 13,34" fill="#101828"/>
+  <path d="M 11,27 C 13,16 19,9 30,9 C 25,15 20,21 18,31" fill="#1a2445"/>
+  <!-- Hair highlight streak (indigo) -->
+  <path d="M 21,11 C 27,8 37,8 45,13 C 37,10 25,10 21,11" fill="#3525CD" opacity="0.65"/>
+  <!-- L eyebrow -->
+  <path d="M 11,22 C 14,16 21,14 27,17" stroke="#0e1424" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- R eyebrow -->
+  <path d="M 49,22 C 46,16 39,14 33,17" stroke="#0e1424" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- L eye sclera (almond: inner corner lower, outer corner higher) -->
+  <path d="M 11,27 C 13,21 21,20 27,24 C 26,30 17,31 11,27" fill="white"/>
+  <!-- L iris + pupil + highlight -->
+  <circle cx="20" cy="26" r="4.5" fill="#3525CD"/>
+  <circle cx="20" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="22" cy="24" r="1.6" fill="white"/>
+  <!-- L upper lid line + outer lash flick -->
+  <path d="M 11,27 C 13,20 21,19 27,23" stroke="#0e1424" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="27" y1="23" x2="28.5" y2="25" stroke="#0e1424" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- R eye sclera -->
+  <path d="M 49,27 C 47,21 39,20 33,24 C 34,30 43,31 49,27" fill="white"/>
+  <!-- R iris + pupil + highlight -->
+  <circle cx="40" cy="26" r="4.5" fill="#3525CD"/>
+  <circle cx="40" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="42" cy="24" r="1.6" fill="white"/>
+  <!-- R upper lid line + outer lash flick -->
+  <path d="M 49,27 C 47,20 39,19 33,23" stroke="#0e1424" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="33" y1="23" x2="31.5" y2="25" stroke="#0e1424" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Nose shadow (minimal) -->
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(170,100,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <!-- Mouth (neutral, slight tension) -->
+  <path d="M 24,44 Q 30,47 36,44" stroke="#c07858" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Shoulders + torso (indigo tunic) -->
+  <path d="M 3,66 C 7,59 20,57 25,64 L 25,95 L 3,95" fill="#2a1eaa"/>
+  <path d="M 57,66 C 53,59 40,57 35,64 L 35,95 L 57,95" fill="#2a1eaa"/>
+  <rect x="18" y="63" width="24" height="32" rx="5" fill="#3525CD"/>
+  <!-- Collar V -->
+  <path d="M 24,63 L 30,70 L 36,63" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Upper arms -->
+  <rect x="2" y="66" width="15" height="32" rx="6" fill="#2a1eaa"/>
+  <rect x="43" y="66" width="15" height="32" rx="6" fill="#2a1eaa"/>
+  <!-- Hands -->
+  <ellipse cx="9" cy="100" rx="6" ry="5" fill="#f0c898"/>
+  <ellipse cx="51" cy="100" rx="6" ry="5" fill="#f0c898"/>
+  <!-- Legs (dark trousers) -->
+  <rect x="17" y="94" width="11" height="36" rx="4" fill="#1a1a2e"/>
+  <rect x="32" y="94" width="11" height="36" rx="4" fill="#1a1a2e"/>
+</symbol>
+
+<!-- ─────────────────────────────────────────────────────────────
+     CHAR 02 · KAI · The Catalyst · Red #E03C31
+     Spiky dark hair with red highlights. Intense, forward-leaning energy.
+     Ulysses story: plays Ulysses (tied to mast, naval costume)
+     ───────────────────────────────────────────────────────────── -->
+<symbol id="char-kai" viewBox="0 0 60 130">
+  <!-- Hair base mass -->
+  <path d="M 8,28 C 8,18 16,8 30,7 C 44,8 52,18 52,28 C 52,16 44,6 30,6 C 16,6 8,16 8,28" fill="#1a0606"/>
+  <!-- Spiky hair — center spike -->
+  <path d="M 26,13 L 22,2 L 30,9 L 38,2 L 34,13" fill="#1a0606"/>
+  <!-- Left spikes -->
+  <path d="M 10,24 C 8,16 10,8 16,5 L 20,14 C 14,12 11,18 10,24" fill="#1a0606"/>
+  <path d="M 6,28 L 3,18 L 12,22" fill="#1a0606"/>
+  <!-- Right spikes -->
+  <path d="M 50,24 C 52,16 50,8 44,5 L 40,14 C 46,12 49,18 50,24" fill="#1a0606"/>
+  <path d="M 54,28 L 57,18 L 48,22" fill="#1a0606"/>
+  <!-- Red highlight in hair -->
+  <path d="M 22,13 C 26,9 34,9 38,13 C 34,10 26,10 22,13" fill="#E03C31" opacity="0.7"/>
+  <path d="M 10,22 C 9,16 12,10 16,7" stroke="#E03C31" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M 50,22 C 51,16 48,10 44,7" stroke="#E03C31" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <!-- Head (teardrop) -->
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <!-- Front hair spikes over forehead -->
+  <path d="M 10,28 C 12,18 18,11 26,12 C 22,17 16,23 14,32" fill="#1a0606"/>
+  <path d="M 13,25 L 10,15 L 20,20" fill="#1a0606"/>
+  <!-- L eyebrow (sharp, angled — intense) -->
+  <path d="M 11,21 C 15,15 22,14 27,17" stroke="#1a0606" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- R eyebrow -->
+  <path d="M 49,21 C 45,15 38,14 33,17" stroke="#1a0606" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- L eye sclera -->
+  <path d="M 11,27 C 13,21 21,20 27,24 C 26,30 17,31 11,27" fill="white"/>
+  <!-- L iris (red) + pupil + highlight -->
+  <circle cx="20" cy="26" r="4.5" fill="#E03C31"/>
+  <circle cx="20" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="22" cy="24" r="1.6" fill="white"/>
+  <path d="M 11,27 C 13,20 21,19 27,23" stroke="#1a0606" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="27" y1="23" x2="28.5" y2="25" stroke="#1a0606" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- R eye sclera -->
+  <path d="M 49,27 C 47,21 39,20 33,24 C 34,30 43,31 49,27" fill="white"/>
+  <!-- R iris + pupil + highlight -->
+  <circle cx="40" cy="26" r="4.5" fill="#E03C31"/>
+  <circle cx="40" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="42" cy="24" r="1.6" fill="white"/>
+  <path d="M 49,27 C 47,20 39,19 33,23" stroke="#1a0606" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="33" y1="23" x2="31.5" y2="25" stroke="#1a0606" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(170,100,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <!-- Mouth (set with determination) -->
+  <path d="M 25,44 Q 30,46 35,44" stroke="#b86040" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Outfit (crimson) -->
+  <path d="M 3,66 C 7,59 20,57 25,64 L 25,95 L 3,95" fill="#b02820"/>
+  <path d="M 57,66 C 53,59 40,57 35,64 L 35,95 L 57,95" fill="#b02820"/>
+  <rect x="18" y="63" width="24" height="32" rx="5" fill="#E03C31"/>
+  <!-- High collar detail -->
+  <path d="M 24,63 L 24,58 L 30,62 L 36,58 L 36,63" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Belt stripe -->
+  <rect x="18" y="87" width="24" height="4" rx="1" fill="#b02820"/>
+  <rect x="18" y="88" width="24" height="2" rx="1" fill="rgba(255,255,255,0.12)"/>
+  <!-- Upper arms -->
+  <rect x="2" y="66" width="15" height="30" rx="6" fill="#b02820"/>
+  <rect x="43" y="66" width="15" height="30" rx="6" fill="#b02820"/>
+  <!-- Hands -->
+  <ellipse cx="9" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <ellipse cx="51" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <!-- Legs (dark) -->
+  <rect x="17" y="94" width="11" height="36" rx="4" fill="#2a0a0a"/>
+  <rect x="32" y="94" width="11" height="36" rx="4" fill="#2a0a0a"/>
+</symbol>
+
+<!-- ─────────────────────────────────────────────────────────────
+     CHAR 03 · SOL · The Builder · Gray #4b6280
+     Short practical dark hair. Neutral/dutiful expression.
+     Ulysses story: plays Crew (nautical uniform, hands over ears)
+     ───────────────────────────────────────────────────────────── -->
+<symbol id="char-sol" viewBox="0 0 60 130">
+  <!-- Hair back -->
+  <path d="M 30,4 C 47,4 53,13 52,26 C 54,15 48,5 30,5 C 12,5 6,15 8,26 C 7,13 13,4 30,4" fill="#1f2937"/>
+  <!-- Head -->
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <!-- Short hair (close to head, slightly rounded at top) -->
+  <path d="M 9,28 C 9,14 16,6 30,6 C 44,6 51,14 51,28 C 51,18 44,8 30,8 C 16,8 9,18 9,28" fill="#1f2937"/>
+  <!-- Side taper -->
+  <path d="M 9,28 C 9,22 11,16 14,24" fill="#1f2937"/>
+  <path d="M 51,28 C 51,22 49,16 46,24" fill="#1f2937"/>
+  <!-- L eyebrow (flat, practical) -->
+  <path d="M 12,22 C 15,18 22,16 28,18" stroke="#1f2937" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- R eyebrow -->
+  <path d="M 48,22 C 45,18 38,16 32,18" stroke="#1f2937" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- L eye sclera -->
+  <path d="M 12,27 C 14,21 22,20 28,24 C 27,30 18,31 12,27" fill="white"/>
+  <!-- L iris (gray-blue) -->
+  <circle cx="21" cy="26" r="4.5" fill="#4b6280"/>
+  <circle cx="21" cy="26" r="2.8" fill="rgba(0,0,0,0.4)"/>
+  <circle cx="23" cy="24" r="1.6" fill="white"/>
+  <path d="M 12,27 C 14,20 22,19 28,23" stroke="#1f2937" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <line x1="28" y1="23" x2="29.5" y2="25" stroke="#1f2937" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- R eye sclera -->
+  <path d="M 48,27 C 46,21 38,20 32,24 C 33,30 42,31 48,27" fill="white"/>
+  <!-- R iris -->
+  <circle cx="39" cy="26" r="4.5" fill="#4b6280"/>
+  <circle cx="39" cy="26" r="2.8" fill="rgba(0,0,0,0.4)"/>
+  <circle cx="41" cy="24" r="1.6" fill="white"/>
+  <path d="M 48,27 C 46,20 38,19 32,23" stroke="#1f2937" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <line x1="32" y1="23" x2="30.5" y2="25" stroke="#1f2937" stroke-width="1.4" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(165,95,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <!-- Mouth (slightly tense) -->
+  <path d="M 25,44 Q 30,46 35,44" stroke="#b87060" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Outfit (gray-blue) -->
+  <path d="M 4,66 C 8,59 20,57 25,64 L 25,95 L 4,95" fill="#374151"/>
+  <path d="M 56,66 C 52,59 40,57 35,64 L 35,95 L 56,95" fill="#374151"/>
+  <rect x="18" y="63" width="24" height="32" rx="5" fill="#4b5563"/>
+  <!-- Simple collar -->
+  <rect x="26" y="63" width="8" height="3" rx="1" fill="rgba(255,255,255,0.15)"/>
+  <!-- Upper arms -->
+  <rect x="2" y="66" width="15" height="30" rx="6" fill="#374151"/>
+  <rect x="43" y="66" width="15" height="30" rx="6" fill="#374151"/>
+  <!-- Hands (one up near ear — default pose) -->
+  <ellipse cx="9" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <ellipse cx="51" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <!-- Legs -->
+  <rect x="17" y="94" width="11" height="36" rx="4" fill="#1f2937"/>
+  <rect x="32" y="94" width="11" height="36" rx="4" fill="#1f2937"/>
+</symbol>
+
+<!-- ─────────────────────────────────────────────────────────────
+     CHAR 04 · MIRA · The Mentor · Amber #F59E0B
+     Auburn hair with amber streaks, partially tied up. Calm expression.
+     Ulysses story: plays Circe (flowing robe costume)
+     ───────────────────────────────────────────────────────────── -->
+<symbol id="char-mira" viewBox="0 0 60 130">
+  <!-- Long hair back (auburn, flows down behind body) -->
+  <path d="M 8,28 C 6,14 14,3 30,3 C 46,3 54,14 52,28 C 50,16 43,6 30,6 C 17,6 10,16 8,28" fill="#3d1a10"/>
+  <path d="M 8,28 L 6,55 C 5,72 5,95 8,112 L 15,112 C 12,95 11,72 10,55 L 10,30" fill="#3d1a10"/>
+  <path d="M 52,28 L 54,55 C 55,72 55,95 52,112 L 45,112 C 48,95 49,72 50,55 L 50,30" fill="#3d1a10"/>
+  <!-- Head -->
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <!-- Front hair + bangs (parted center, softer than hero) -->
+  <path d="M 8,30 C 10,16 17,8 28,9 C 23,15 16,22 14,34" fill="#3d1a10"/>
+  <path d="M 52,30 C 50,16 43,8 32,9 C 37,15 44,22 46,34" fill="#3d1a10"/>
+  <!-- Upswept portion (bun suggestion at top back) -->
+  <path d="M 24,10 C 27,6 33,5 38,8 C 36,7 30,7 24,10" fill="#521f14" opacity="0.9"/>
+  <!-- Amber highlight streaks -->
+  <path d="M 20,11 C 26,8 36,8 44,13 C 36,10 24,10 20,11" fill="#F59E0B" opacity="0.55"/>
+  <path d="M 8,40 C 7,54 7,70 9,86" stroke="#F59E0B" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round"/>
+  <!-- L eyebrow (graceful arch) -->
+  <path d="M 11,21 C 15,15 22,13 28,16" stroke="#3d1a10" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- R eyebrow -->
+  <path d="M 49,21 C 45,15 38,13 32,16" stroke="#3d1a10" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- L eye sclera -->
+  <path d="M 11,26 C 13,20 21,19 27,23 C 26,30 16,31 11,26" fill="white"/>
+  <!-- L iris (amber/gold) -->
+  <circle cx="19" cy="25" r="4.5" fill="#d48806"/>
+  <circle cx="19" cy="25" r="2.8" fill="rgba(0,0,0,0.35)"/>
+  <circle cx="21" cy="23" r="1.8" fill="rgba(255,220,100,0.9)"/>
+  <circle cx="21" cy="23" r="1" fill="white"/>
+  <path d="M 11,26 C 13,19 21,18 27,22" stroke="#3d1a10" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="27" y1="22" x2="28.5" y2="24" stroke="#3d1a10" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- R eye sclera -->
+  <path d="M 49,26 C 47,20 39,19 33,23 C 34,30 44,31 49,26" fill="white"/>
+  <!-- R iris -->
+  <circle cx="41" cy="25" r="4.5" fill="#d48806"/>
+  <circle cx="41" cy="25" r="2.8" fill="rgba(0,0,0,0.35)"/>
+  <circle cx="43" cy="23" r="1.8" fill="rgba(255,220,100,0.9)"/>
+  <circle cx="43" cy="23" r="1" fill="white"/>
+  <path d="M 49,26 C 47,19 39,18 33,22" stroke="#3d1a10" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="33" y1="22" x2="31.5" y2="24" stroke="#3d1a10" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(165,95,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <!-- Mouth (calm, slight knowing smile) -->
+  <path d="M 24,44 Q 30,48 36,44" stroke="#c07858" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <path d="M 27,43 Q 30,42 33,43" stroke="#d09070" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Robe (deep purple with amber edge) -->
+  <path d="M 3,66 C 7,58 19,56 25,64 L 25,96 L 3,96" fill="#2d1b5e"/>
+  <path d="M 57,66 C 53,58 41,56 35,64 L 35,96 L 57,96" fill="#2d1b5e"/>
+  <rect x="18" y="63" width="24" height="33" rx="5" fill="#3d2570"/>
+  <!-- Amber robe trim -->
+  <path d="M 24,63 L 30,72 L 36,63" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="18" y1="75" x2="42" y2="75" stroke="#F59E0B" stroke-width="0.8" opacity="0.45"/>
+  <!-- Upper arms (wide sleeve) -->
+  <rect x="1" y="66" width="16" height="34" rx="7" fill="#2d1b5e"/>
+  <rect x="43" y="66" width="16" height="34" rx="7" fill="#2d1b5e"/>
+  <!-- Hands -->
+  <ellipse cx="9" cy="102" rx="6" ry="5" fill="#f0c898"/>
+  <ellipse cx="51" cy="102" rx="6" ry="5" fill="#f0c898"/>
+  <!-- Legs (robe hem — obscured) -->
+  <rect x="17" y="95" width="26" height="35" rx="6" fill="#2d1b5e"/>
+  <!-- Amber hem detail -->
+  <line x1="17" y1="120" x2="43" y2="120" stroke="#F59E0B" stroke-width="1.2" opacity="0.5"/>
+</symbol>
+
+<!-- ─────────────────────────────────────────────────────────────
+     COSTUME VARIANTS — face/hair DNA identical to base character.
+     Only outfit changes. Iris color is ALWAYS the character's own.
+     ───────────────────────────────────────────────────────────── -->
+
+<!-- ROSA · OCEAN COSTUME · teal outfit, arms raised, INDIGO eyes -->
+<symbol id="char-rosa-ocean" viewBox="0 0 60 130">
+  <path d="M 30,3 C 47,3 54,13 53,27 C 55,16 49,5 30,5 C 11,5 5,16 7,27 C 6,13 13,3 30,3" fill="#101828"/>
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <path d="M 9,30 C 10,18 16,10 26,11 C 21,16 15,23 13,34" fill="#101828"/>
+  <path d="M 11,27 C 13,16 19,9 30,9 C 25,15 20,21 18,31" fill="#1a2445"/>
+  <path d="M 21,11 C 27,8 37,8 45,13 C 37,10 25,10 21,11" fill="#3525CD" opacity="0.65"/>
+  <path d="M 11,22 C 14,16 21,14 27,17" stroke="#0e1424" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M 49,22 C 46,16 39,14 33,17" stroke="#0e1424" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M 11,27 C 13,21 21,20 27,24 C 26,30 17,31 11,27" fill="white"/>
+  <circle cx="20" cy="26" r="4.5" fill="#3525CD"/>
+  <circle cx="20" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="22" cy="24" r="1.6" fill="white"/>
+  <path d="M 11,27 C 13,20 21,19 27,23" stroke="#0e1424" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="27" y1="23" x2="28.5" y2="25" stroke="#0e1424" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 49,27 C 47,21 39,20 33,24 C 34,30 43,31 49,27" fill="white"/>
+  <circle cx="40" cy="26" r="4.5" fill="#3525CD"/>
+  <circle cx="40" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="42" cy="24" r="1.6" fill="white"/>
+  <path d="M 49,27 C 47,20 39,19 33,23" stroke="#0e1424" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+  <line x1="33" y1="23" x2="31.5" y2="25" stroke="#0e1424" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(170,100,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M 24,44 Q 30,48 36,44" stroke="#c07858" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Teal ocean outfit -->
+  <path d="M 4,66 C 8,59 20,57 25,64 L 25,88 C 14,82 4,74 4,66" fill="#005e6e"/>
+  <path d="M 56,66 C 52,59 40,57 35,64 L 35,88 C 46,82 56,74 56,66" fill="#005e6e"/>
+  <rect x="18" y="63" width="24" height="28" rx="4" fill="#007888"/>
+  <path d="M 18,76 Q 24,72 30,76 Q 36,72 42,76" stroke="#00BCD4" stroke-width="0.9" fill="none" opacity="0.5"/>
+  <!-- Arms raised (siren gesture) -->
+  <path d="M 5,66 C 1,55 0,43 3,34 L 9,36 C 7,44 6,55 9,65" fill="#005e6e"/>
+  <path d="M 55,66 C 59,55 60,43 57,34 L 51,36 C 53,44 54,55 51,65" fill="#005e6e"/>
+  <ellipse cx="4" cy="32" rx="5" ry="5.5" fill="#f0c898"/>
+  <ellipse cx="56" cy="32" rx="5" ry="5.5" fill="#f0c898"/>
+  <!-- Flowing lower half (ocean costume, visible above waterline) -->
+  <path d="M 18,90 C 16,106 14,120 17,130 L 43,130 C 46,120 44,106 42,90 Z" fill="#006070"/>
+  <path d="M 18,76 Q 30,80 42,76 L 42,90 L 18,90 Z" fill="#007888" opacity="0.4"/>
+</symbol>
+
+<!-- KAI · NAVAL COSTUME · dark navy outfit, IDENTICAL red eyes + spiky hair -->
+<symbol id="char-kai-naval" viewBox="0 0 60 130">
+  <path d="M 8,28 C 8,18 16,8 30,7 C 44,8 52,18 52,28 C 52,16 44,6 30,6 C 16,6 8,16 8,28" fill="#1a0606"/>
+  <path d="M 26,13 L 22,2 L 30,9 L 38,2 L 34,13" fill="#1a0606"/>
+  <path d="M 10,24 C 8,16 10,8 16,5 L 20,14 C 14,12 11,18 10,24" fill="#1a0606"/>
+  <path d="M 6,28 L 3,18 L 12,22" fill="#1a0606"/>
+  <path d="M 50,24 C 52,16 50,8 44,5 L 40,14 C 46,12 49,18 50,24" fill="#1a0606"/>
+  <path d="M 54,28 L 57,18 L 48,22" fill="#1a0606"/>
+  <path d="M 22,13 C 26,9 34,9 38,13 C 34,10 26,10 22,13" fill="#E03C31" opacity="0.7"/>
+  <path d="M 10,22 C 9,16 12,10 16,7" stroke="#E03C31" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M 50,22 C 51,16 48,10 44,7" stroke="#E03C31" stroke-width="1.2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M 30,6 C 46,6 53,15 53,27 C 53,42 45,52 30,57 C 15,52 7,42 7,27 C 7,15 14,6 30,6" fill="#f0c898"/>
+  <path d="M 10,28 C 12,18 18,11 26,12 C 22,17 16,23 14,32" fill="#1a0606"/>
+  <path d="M 13,25 L 10,15 L 20,20" fill="#1a0606"/>
+  <path d="M 11,21 C 15,15 22,14 27,17" stroke="#1a0606" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M 49,21 C 45,15 38,14 33,17" stroke="#1a0606" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M 11,27 C 13,21 21,20 27,24 C 26,30 17,31 11,27" fill="white"/>
+  <circle cx="20" cy="26" r="4.5" fill="#E03C31"/>
+  <circle cx="20" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="22" cy="24" r="1.6" fill="white"/>
+  <path d="M 11,27 C 13,20 21,19 27,23" stroke="#1a0606" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="27" y1="23" x2="28.5" y2="25" stroke="#1a0606" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 49,27 C 47,21 39,20 33,24 C 34,30 43,31 49,27" fill="white"/>
+  <circle cx="40" cy="26" r="4.5" fill="#E03C31"/>
+  <circle cx="40" cy="26" r="2.8" fill="rgba(0,0,0,0.42)"/>
+  <circle cx="42" cy="24" r="1.6" fill="white"/>
+  <path d="M 49,27 C 47,20 39,19 33,23" stroke="#1a0606" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="33" y1="23" x2="31.5" y2="25" stroke="#1a0606" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 29,36 Q 30,39 31,36" stroke="rgba(170,100,55,0.4)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M 25,44 Q 30,46 35,44" stroke="#b86040" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <rect x="25" y="55" width="10" height="10" rx="3" fill="#f0c898"/>
+  <!-- Dark navy outfit (hero/Ulysses costume) -->
+  <path d="M 3,66 C 7,59 20,57 25,64 L 25,95 L 3,95" fill="#0a1428"/>
+  <path d="M 57,66 C 53,59 40,57 35,64 L 35,95 L 57,95" fill="#0a1428"/>
+  <rect x="18" y="63" width="24" height="32" rx="5" fill="#0f1e38"/>
+  <!-- Gold collar trim (heroic detail) -->
+  <path d="M 24,63 L 30,70 L 36,63" fill="none" stroke="rgba(200,160,60,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="18" y1="80" x2="42" y2="80" stroke="rgba(200,160,60,0.35)" stroke-width="1"/>
+  <rect x="2" y="66" width="15" height="30" rx="6" fill="#0a1428"/>
+  <rect x="43" y="66" width="15" height="30" rx="6" fill="#0a1428"/>
+  <ellipse cx="9" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <ellipse cx="51" cy="98" rx="6" ry="5" fill="#f0c898"/>
+  <rect x="17" y="94" width="11" height="36" rx="4" fill="#060e1e"/>
+  <rect x="32" y="94" width="11" height="36" rx="4" fill="#060e1e"/>
+</symbol>
+
+</defs>
+</svg>
+
+<!-- ══════════════════════════════════════════════ COVER -->
+<section class="cover">
+  <div class="cover-glow-1"></div>
+  <div class="cover-glow-2"></div>
+  <div class="cover-bookit">Bookit · Generated Book · Style X</div>
+
+  <!-- ── COVER ILLUSTRATION: Ulysses at the Mast ── -->
+  <div class="cover-illus">
+    <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:100%;height:auto;display:block">
+      <defs>
+        <radialGradient id="cg-siren" cx="50%" cy="60%" r="50%">
+          <stop offset="0%" stop-color="#00BCD4" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#00BCD4" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="cg-hero" cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stop-color="#3525CD" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="#3525CD" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Stars -->
+      <circle cx="38" cy="18" r="1.3" fill="white" opacity="0.65"/>
+      <circle cx="115" cy="12" r="0.9" fill="white" opacity="0.5"/>
+      <circle cx="190" cy="28" r="1.1" fill="white" opacity="0.6"/>
+      <circle cx="260" cy="9" r="1.3" fill="white" opacity="0.7"/>
+      <circle cx="340" cy="22" r="0.8" fill="white" opacity="0.45"/>
+      <circle cx="415" cy="11" r="1.1" fill="white" opacity="0.6"/>
+      <circle cx="500" cy="17" r="1.3" fill="white" opacity="0.5"/>
+      <circle cx="575" cy="7" r="0.9" fill="white" opacity="0.65"/>
+      <circle cx="630" cy="25" r="1" fill="white" opacity="0.4"/>
+      <circle cx="72" cy="42" r="0.7" fill="white" opacity="0.35"/>
+      <circle cx="168" cy="52" r="0.9" fill="white" opacity="0.4"/>
+      <circle cx="478" cy="38" r="0.7" fill="white" opacity="0.35"/>
+      <circle cx="545" cy="48" r="1" fill="white" opacity="0.4"/>
+      <circle cx="655" cy="14" r="0.7" fill="white" opacity="0.5"/>
+
+      <!-- Crescent moon -->
+      <circle cx="610" cy="42" r="26" fill="rgba(255,255,255,0.82)"/>
+      <circle cx="623" cy="35" r="22" fill="#0a0d18"/>
+
+      <!-- Ocean -->
+      <path d="M0,248 Q50,235 100,248 Q150,261 200,248 Q250,235 300,248 Q350,261 400,248 Q450,235 500,248 Q550,261 600,248 Q640,238 680,248 L680,280 L0,280 Z" fill="#0d1025"/>
+
+      <!-- Atmospheric siren glow (ocean, cyan — environmental not character) -->
+      <ellipse cx="88" cy="220" rx="85" ry="58" fill="url(#cg-siren)"/>
+
+      <!-- Rosa · Siren costume · foreground (arms raised, rises from water) -->
+      <use href="#char-rosa-ocean" x="42" y="148" width="66" height="143"/>
+      <!-- Rosa · Siren costume · background (slightly smaller = depth) -->
+      <use href="#char-rosa-ocean" x="102" y="160" width="52" height="112"/>
+      <!-- Musical notes floating from Rosa -->
+      <text x="22" y="188" font-size="13" fill="#00BCD4" opacity="0.6" font-family="serif">♪</text>
+      <text x="106" y="176" font-size="11" fill="#00BCD4" opacity="0.45" font-family="serif">♫</text>
+
+      <!-- Ship hull -->
+      <path d="M195,252 L225,226 L490,226 L520,252 Z" fill="#111827"/>
+      <rect x="225" y="219" width="265" height="9" rx="3" fill="#1a2a42"/>
+
+      <!-- Mast -->
+      <rect x="352" y="58" width="11" height="170" rx="2" fill="#1e2d4a"/>
+
+      <!-- Sail hints -->
+      <path d="M363,65 L363,150 Q400,115 430,95 Z" fill="rgba(255,255,255,0.04)"/>
+      <path d="M352,65 L352,150 Q315,115 285,95 Z" fill="rgba(255,255,255,0.03)"/>
+
+      <!-- Crossbeam -->
+      <rect x="290" y="112" width="135" height="8" rx="2" fill="#1e2d4a"/>
+
+      <!-- Rigging lines -->
+      <line x1="290" y1="120" x2="238" y2="226" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="425" y1="120" x2="470" y2="226" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+      <line x1="290" y1="112" x2="352" y2="58" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+      <line x1="425" y1="112" x2="363" y2="58" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+      <!-- Sol (crew 1) · left of mast · hands over ears -->
+      <use href="#char-sol" x="228" y="112" width="56" height="114"/>
+      <!-- Sol's hands covering ears (scene overlay) -->
+      <ellipse cx="236" cy="170" rx="9" ry="8" fill="#f0c898" opacity="0.88"/>
+      <ellipse cx="284" cy="170" rx="9" ry="8" fill="#f0c898" opacity="0.88"/>
+
+      <!-- Sol (crew 2) · right of mast -->
+      <use href="#char-sol" x="408" y="112" width="56" height="114"/>
+      <ellipse cx="416" cy="170" rx="9" ry="8" fill="#f0c898" opacity="0.88"/>
+      <ellipse cx="464" cy="170" rx="9" ry="8" fill="#f0c898" opacity="0.88"/>
+
+      <!-- Kai · naval costume · at the mast, center -->
+      <ellipse cx="357" cy="158" rx="48" ry="55" fill="url(#cg-hero)"/>
+      <use href="#char-kai-naval" x="318" y="64" width="76" height="162"/>
+      <!-- Rope bindings lashed to mast (scene-specific overlay on Kai) -->
+      <line x1="314" y1="134" x2="396" y2="134" stroke="rgba(240,230,200,0.75)" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="314" y1="148" x2="396" y2="148" stroke="rgba(240,230,200,0.75)" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="314" y1="162" x2="396" y2="162" stroke="rgba(240,230,200,0.75)" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="314" y1="178" x2="396" y2="178" stroke="rgba(240,230,200,0.75)" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="cover-bottom">
+    <h1 class="cover-title">Understanding<br>Ulysses Pacts</h1>
+    <p class="cover-subtitle">A complete guide to commitment devices — how they work, why they work, and how to build ones that last.</p>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">
+      <div>
+        <div class="cover-meta-label">Source: Ulysses Pacts — Research Synthesis</div>
+      </div>
+      <div class="cover-meta-label">2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ TABLE OF CONTENTS -->
+<nav class="toc">
+  <div class="toc-eyebrow">Contents</div>
+  <h2>What's Inside</h2>
+  <ul class="toc-list">
+    <li><span class="toc-num">01</span><span class="toc-title">What Is a Ulysses Pact?</span><span class="toc-dots"></span><span class="toc-pg">Ch. 1</span></li>
+    <li><span class="toc-num">02</span><span class="toc-title">The Psychology Behind Commitment Devices</span><span class="toc-dots"></span><span class="toc-pg">Ch. 2</span></li>
+    <li><span class="toc-num">03</span><span class="toc-title">Scientific Evidence for Effectiveness</span><span class="toc-dots"></span><span class="toc-pg">Ch. 3</span></li>
+    <li><span class="toc-num">04</span><span class="toc-title">How to Build Effective Ulysses Pacts</span><span class="toc-dots"></span><span class="toc-pg">Ch. 4</span></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════ CHAPTER 1 -->
+<div class="ch-opener" id="ch1">
+  <div class="ch-opener-bg-num">01</div>
+  <div class="ch-label">Chapter One</div>
+  <div class="ch-title">What Is a Ulysses Pact?</div>
+  <div class="ch-desc">From Homer's Odyssey to modern commitment science — the origin and core logic of binding your future self.</div>
+</div>
+
+<div class="ch-body">
+
+  <div class="s-head">
+    <div class="s-head-num">1</div>
+    <h2>The Core Idea</h2>
+  </div>
+
+  <p class="body-lg">A Ulysses pact is a freely made decision designed to bind yourself in the future, preventing poor choices when you anticipate being in a compromised state of judgment.</p>
+
+  <div class="defn">
+    <div class="defn-term">Ulysses Pact</div>
+    <div class="defn-rule"></div>
+    <p>A pre-commitment strategy in which a person, during a moment of clear judgment, makes a binding decision that restricts their own future choices — specifically to prevent anticipated poor decisions when willpower or rationality may be diminished.</p>
+  </div>
+
+  <p class="body-p">The concept comes from Homer's <em>Odyssey</em>. Ulysses wanted to hear the Sirens' enchanting song while avoiding the fatal temptation it created. Following advice from the witch Circe, he had his crew plug their ears with wax so they could safely navigate past the island. He then ordered them to tie him to the mast and keep their swords drawn — with strict instructions not to release him under any circumstances, even if he begged.</p>
+
+  <div class="pull-q">
+    <div class="pull-q-text">"You don't eliminate the temptation — you remove the possibility of giving in to it."</div>
+    <div class="pull-q-src">— Nick Wignall · nickwignall.com</div>
+  </div>
+
+  <!-- Diagram: How a Ulysses pact works (3 phases) -->
+  <figure style="margin:2rem 0">
+    <svg viewBox="0 0 640 162" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block" aria-label="Three-phase diagram: Moment of Clarity, Bind Your Future Self, Hold the Line">
+      <!-- Panel 1: Mira (Mentor) — moment of wisdom/clarity -->
+      <rect x="0" y="0" width="190" height="162" rx="6" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <text x="16" y="34" font-family="Space Grotesk, sans-serif" font-size="30" font-weight="800" fill="#F59E0B" opacity="0.13">1</text>
+      <use href="#char-mira" x="77" y="4" width="36" height="78"/>
+      <text x="95" y="93" font-family="Space Grotesk, sans-serif" font-size="8" font-weight="700" fill="#F59E0B" text-anchor="middle" style="letter-spacing:0.1em">MIRA</text>
+      <text x="95" y="105" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">MOMENT OF CLARITY</text>
+      <text x="95" y="120" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">You see the trap clearly.</text>
+      <text x="95" y="135" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Judgment intact.</text>
+
+      <!-- Arrow 1 -->
+      <line x1="198" y1="81" x2="220" y2="81" stroke="#e2ddd6" stroke-width="1.5"/>
+      <polygon points="220,76 228,81 220,86" fill="#e2ddd6"/>
+
+      <!-- Panel 2: Rosa (Strategist) — making the commitment -->
+      <rect x="228" y="0" width="184" height="162" rx="6" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <text x="244" y="34" font-family="Space Grotesk, sans-serif" font-size="30" font-weight="800" fill="#3525CD" opacity="0.13">2</text>
+      <use href="#char-rosa" x="302" y="4" width="36" height="78"/>
+      <text x="320" y="93" font-family="Space Grotesk, sans-serif" font-size="8" font-weight="700" fill="#3525CD" text-anchor="middle" style="letter-spacing:0.1em">ROSA</text>
+      <text x="320" y="105" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">BIND YOUR FUTURE SELF</text>
+      <text x="320" y="120" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Set the commitment now.</text>
+      <text x="320" y="135" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Before temptation arrives.</text>
+
+      <!-- Arrow 2 -->
+      <line x1="420" y1="81" x2="442" y2="81" stroke="#e2ddd6" stroke-width="1.5"/>
+      <polygon points="442,76 450,81 442,86" fill="#e2ddd6"/>
+
+      <!-- Panel 3: Kai (Catalyst) — holding the line under pressure -->
+      <rect x="450" y="0" width="190" height="162" rx="6" fill="white" stroke="#E03C31" stroke-width="2"/>
+      <text x="466" y="34" font-family="Space Grotesk, sans-serif" font-size="30" font-weight="800" fill="#E03C31" opacity="0.18">3</text>
+      <use href="#char-kai" x="527" y="4" width="36" height="78"/>
+      <text x="545" y="93" font-family="Space Grotesk, sans-serif" font-size="8" font-weight="700" fill="#E03C31" text-anchor="middle" style="letter-spacing:0.1em">KAI</text>
+      <text x="545" y="105" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">HOLD THE LINE</text>
+      <text x="545" y="120" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Crisis hits. Commitment</text>
+      <text x="545" y="135" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">overrides impulse.</text>
+    </svg>
+    <figcaption style="font-size:0.72rem;color:#9ca3af;margin-top:0.6rem;text-align:center;letter-spacing:0.04em">The three-phase structure of every effective Ulysses pact</figcaption>
+  </figure>
+
+  <p class="body-p">When Ulysses heard the song, he was driven temporarily insane and struggled desperately to break free. But his men kept their promise. This allowed Ulysses to become the first man to hear the Sirens' song and survive.</p>
+
+  <hr class="sec-rule">
+
+  <div class="s-head">
+    <div class="s-head-num">2</div>
+    <h2>Modern Applications</h2>
+  </div>
+
+  <p class="body-lg">Today, a Ulysses pact — also called a commitment device — involves making a decision during a moment of strength or clarity to safeguard against anticipated future weakness.</p>
+
+  <div class="callout c-concept">
+    <div class="callout-lbl">Key Concept</div>
+    <p>The strategy works through three main approaches: <strong>removing temptation entirely</strong>, <strong>creating barriers to undesired behavior</strong>, or <strong>adding friction to bad choices</strong>. The goal is not to fight willpower — it's to make willpower unnecessary.</p>
+  </div>
+
+  <p class="body-p">Common examples include brushing your teeth immediately after dinner to reduce late-night snacking, destroying credit cards to stick to a budget, or paying upfront for a gym membership to incentivize future visits.</p>
+
+  <div class="callout c-note">
+    <div class="callout-lbl">Note</div>
+    <p>In technology, Apple's decision to engineer iPhones so that even Apple cannot access user data has been described as "a digital Ulysses pact" — a structural commitment made in advance to prevent future capitulation to government pressure.</p>
+  </div>
+
+  <div class="ch-summary">
+    <div class="summary-lbl">Chapter Summary</div>
+    <ul>
+      <li>A Ulysses pact is a pre-commitment made during clarity to constrain your future self under anticipated weakness</li>
+      <li>The original metaphor: Ulysses tied to the mast — he heard the Sirens but could not act on the impulse</li>
+      <li>Three mechanisms: remove temptation, create barriers, add friction to bad choices</li>
+      <li>Modern applications range from personal habits to corporate data policy</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ CHAPTER 2 -->
+<div class="ch-opener" id="ch2">
+  <div class="ch-opener-bg-num">02</div>
+  <div class="ch-label">Chapter Two</div>
+  <div class="ch-title">The Psychology Behind Commitment Devices</div>
+  <div class="ch-desc">Why pre-commitments work — the cognitive biases they exploit and the behavioral benefits they produce.</div>
+</div>
+
+<div class="ch-body">
+
+  <p class="body-lg">Commitment devices provide powerful psychological benefits by addressing fundamental cognitive biases and structural motivation problems — rather than relying on willpower alone.</p>
+
+  <div class="callout c-concept">
+    <div class="callout-lbl">Key Concept</div>
+    <p>The core advantage is transforming goal achievement from a willpower problem into an <strong>architectural solution</strong> — removing the possibility of giving in to temptation by making decisions during moments of clarity before emotional states cloud judgment.</p>
+  </div>
+
+  <div class="sub-head">Overcoming Cognitive Biases</div>
+
+  <div class="s-head-sub">Loss Aversion Activation</div>
+  <p class="body-p">Commitment devices leverage the fact that humans feel the pain of losing something roughly twice as intensely as the pleasure of gaining the same thing. By putting something at stake — money, reputation, or time — you transform your goal from a potential gain into a potential loss, activating the brain's threat-detection system and making goal completion feel urgent rather than optional.</p>
+
+  <div class="defn">
+    <div class="defn-term">Present vs. Future Self</div>
+    <div class="defn-rule"></div>
+    <p>Nobel laureate Thomas Schelling identified how future selves develop different preferences than present selves, creating competing priorities within a single person. Your Monday-morning self plans to exercise. Your 5 PM self wants the couch. Commitment devices let the planning self constrain the tempted self before temptation arrives.</p>
+  </div>
+
+  <div class="sub-head">Practical Performance Benefits</div>
+
+  <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="stat-cell">
+      <div class="stat-num">2–3×</div>
+      <div class="stat-lbl">Higher success rates vs. willpower alone</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">30.7%</div>
+      <div class="stat-lbl">Smokers who quit using commitment contracts</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">15.2%</div>
+      <div class="stat-lbl">Quit rate with standard support only</div>
+    </div>
+  </div>
+
+  <p class="body-p">The method shifts the mental challenge from "should I do this?" — which willpower constantly loses — to "do I want to pay the cost of backing out?" This removes the decision-making burden from your future self by pre-deciding and making deviation expensive financially, socially, or psychologically.</p>
+
+  <!-- Diagram: Decision Fork -->
+  <figure style="margin:2rem 0">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block" aria-label="Decision fork: Willpower path leads to failure, Pre-Commitment path leads to success">
+      <!-- Rosa (char-rosa) — playing her default Strategist role here -->
+      <use href="#char-rosa" x="4" y="45" width="72" height="156"/>
+
+      <!-- Stem arrow from character to fork -->
+      <line x1="78" y1="110" x2="148" y2="110" stroke="#9ca3af" stroke-width="1.5"/>
+      <circle cx="152" cy="110" r="5" fill="#9ca3af"/>
+
+      <!-- Path A: top / willpower (dashed gray) -->
+      <path d="M157,107 Q192,88 232,72" fill="none" stroke="#c8c4be" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <rect x="232" y="50" width="200" height="44" rx="5" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <text x="332" y="68" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#9ca3af" text-anchor="middle" style="letter-spacing:0.07em">RELY ON WILLPOWER</text>
+      <text x="332" y="84" font-family="Inter, sans-serif" font-size="10" fill="#9ca3af" text-anchor="middle">Decide again under pressure</text>
+      <line x1="432" y1="72" x2="462" y2="72" stroke="#c8c4be" stroke-width="1.5"/>
+      <polygon points="462,67 470,72 462,77" fill="#c8c4be"/>
+      <!-- Fail circle -->
+      <circle cx="492" cy="72" r="22" fill="white" stroke="#E03C31" stroke-width="2"/>
+      <line x1="481" y1="61" x2="503" y2="83" stroke="#E03C31" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="503" y1="61" x2="481" y2="83" stroke="#E03C31" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="522" y="66" font-family="Inter, sans-serif" font-size="9" fill="#E03C31" style="letter-spacing:0.06em">FAILS</text>
+
+      <!-- Path B: bottom / pre-commitment (solid indigo) -->
+      <path d="M157,113 Q192,132 232,148" fill="none" stroke="#3525CD" stroke-width="2"/>
+      <rect x="232" y="126" width="200" height="44" rx="5" fill="white" stroke="#3525CD" stroke-width="2"/>
+      <text x="332" y="144" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#3525CD" text-anchor="middle" style="letter-spacing:0.07em">PRE-COMMITMENT</text>
+      <text x="332" y="160" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Decide now, while thinking clearly</text>
+      <line x1="432" y1="148" x2="462" y2="148" stroke="#3525CD" stroke-width="1.5"/>
+      <polygon points="462,143 470,148 462,153" fill="#3525CD"/>
+      <!-- Success circle -->
+      <circle cx="492" cy="148" r="22" fill="white" stroke="#43A047" stroke-width="2"/>
+      <path d="M480,148 L488,156 L504,140" fill="none" stroke="#43A047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="522" y="142" font-family="Inter, sans-serif" font-size="9" fill="#43A047" style="letter-spacing:0.06em">SUCCEEDS</text>
+
+      <!-- Path labels -->
+      <text x="170" y="86" font-family="Inter, sans-serif" font-size="9" fill="#9ca3af">A</text>
+      <text x="170" y="137" font-family="Inter, sans-serif" font-size="9" fill="#3525CD">B</text>
+    </svg>
+    <figcaption style="font-size:0.72rem;color:#9ca3af;margin-top:0.6rem;text-align:center;letter-spacing:0.04em">Pre-commitment removes the need to decide again when pressure arrives</figcaption>
+  </figure>
+
+  <div class="callout c-evid">
+    <div class="callout-lbl">Evidence</div>
+    <p>Long-term habit formation persists even after the commitment period ends. Social accountability compounds these benefits — making commitments with someone else leverages the social and psychological cost of letting people down, providing ongoing support and pressure.</p>
+  </div>
+
+  <div class="pull-q">
+    <div class="pull-q-text">"Rather than bemoaning human irrationality, Ulysses pacts exemplify a more creative and clever approach to doing the right thing."</div>
+    <div class="pull-q-src">— nickwignall.com · Ulysses Pact</div>
+  </div>
+
+  <div class="ch-summary">
+    <div class="summary-lbl">Chapter Summary</div>
+    <ul>
+      <li>Commitment devices work by turning goals from potential gains (low priority) into potential losses (high urgency)</li>
+      <li>They resolve the present-vs-future self conflict by letting your planning self constrain your tempted self in advance</li>
+      <li>Success rates improve 2–3× compared to relying on willpower alone</li>
+      <li>Social accountability adds a further 20% improvement on top of financial stakes</li>
+      <li>Benefits persist beyond the commitment period — behavioral change tends to stick</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ CHAPTER 3 -->
+<div class="ch-opener" id="ch3">
+  <div class="ch-opener-bg-num">03</div>
+  <div class="ch-label">Chapter Three</div>
+  <div class="ch-title">Scientific Evidence for Effectiveness</div>
+  <div class="ch-desc">Randomized controlled trials, platform data, and what the numbers actually say about when pacts work — and when they don't.</div>
+</div>
+
+<div class="ch-body">
+
+  <p class="body-lg">Scientific research demonstrates that commitment devices significantly increase goal achievement across multiple domains, with effect sizes ranging from doubling to tripling success rates.</p>
+
+  <div class="sub-head">Smoking Cessation Studies</div>
+
+  <p class="body-p">The landmark CARES study (Committed Action to Reduce and End Smoking) represents one of the most rigorous tests of commitment contracts. Researchers designed a voluntary savings account where smokers deposited funds for six months, then took a urine test for nicotine — passing returned their money, failing forfeited it to charity.</p>
+
+  <div class="callout c-evid">
+    <div class="callout-lbl">Evidence</div>
+    <p>Smokers offered the CARES contract were <strong>3.3 to 5.8 percentage points more likely to pass the 6-month cessation test</strong> than the control group. The effect persisted at surprise 12-month tests — indicating lasting behavioral change, not temporary compliance.</p>
+  </div>
+
+  <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="stat-cell">
+      <div class="stat-num" style="color:var(--green)">91–136%</div>
+      <div class="stat-lbl">Enhanced abstinence vs. control groups at 6 months (team-based contracts)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" style="color:var(--accent)">12 mo</div>
+      <div class="stat-lbl">Duration behavioral changes persisted after the commitment period ended</div>
+    </div>
+  </div>
+
+  <div class="sub-head">StickK Platform Data</div>
+
+  <div class="defn">
+    <div class="defn-term">StickK.com</div>
+    <div class="defn-rule"></div>
+    <p>An online commitment contract platform where users make public financial commitments to personal goals. Analysis of its large-scale behavioral data provides some of the most robust real-world evidence for commitment device effectiveness.</p>
+  </div>
+
+  <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="stat-cell">
+      <div class="stat-num">29%</div>
+      <div class="stat-lbl">Goal completion rate without money on the line</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">73%</div>
+      <div class="stat-lbl">Goal completion rate with financial stakes</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" style="color:var(--green)">80%+</div>
+      <div class="stat-lbl">Success rate when pledging to an anti-charity</div>
+    </div>
+  </div>
+
+  <div class="callout c-warn">
+    <div class="callout-lbl">Important</div>
+    <p>Despite dramatically higher success rates with financial stakes, <strong>less than 33% of StickK users voluntarily chose contracts with monetary stakes</strong>. The people who most need the strongest commitment mechanism are often the least likely to choose it.</p>
+  </div>
+
+  <div class="sub-head">Key Moderating Factors</div>
+
+  <p class="body-p">The effectiveness of commitment devices depends on several factors that can be designed for or against:</p>
+
+  <div class="callout c-evid">
+    <div class="callout-lbl">Evidence</div>
+    <p><strong>Financial stakes</strong> increase success rates up to a point of diminishing returns. <strong>Social accountability</strong> through monitoring adds ~20% beyond financial stakes alone. <strong>Hard commitments</strong> with clear penalties consistently outperform soft commitments that rely on intention or self-monitoring.</p>
+  </div>
+
+  <div class="callout c-note">
+    <div class="callout-lbl">Note — Weight Loss Exception</div>
+    <p>A randomized trial of soft commitment devices for time-restricted eating found no significant improvement when baseline motivation was already high (5.4 vs 4.7 days/week, p=0.23). Commitment devices add the most value when motivation is inconsistent — not when it's already strong.</p>
+  </div>
+
+  <div class="ch-summary">
+    <div class="summary-lbl">Chapter Summary</div>
+    <ul>
+      <li>RCT evidence shows commitment contracts improve smoking cessation rates 3.3–5.8 percentage points over control</li>
+      <li>StickK data: 29% success without stakes → 73% with financial stakes → 80%+ with anti-charity pledge</li>
+      <li>Effects persist at 12-month follow-up — this isn't temporary compliance, it's behavioral change</li>
+      <li>Soft commitment devices offer limited benefit when baseline motivation is already high</li>
+      <li>Hard commitments with clear, painful consequences outperform soft ones consistently</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ CHAPTER 4 -->
+<div class="ch-opener" id="ch4">
+  <div class="ch-opener-bg-num">04</div>
+  <div class="ch-label">Chapter Four</div>
+  <div class="ch-title">How to Build Effective Ulysses Pacts</div>
+  <div class="ch-desc">Practical design principles for creating commitment contracts that hold — and a note on psychiatric applications.</div>
+</div>
+
+<div class="ch-body">
+
+  <p class="body-lg">Effective Ulysses pacts leverage commitment devices to lock in good decisions during moments of clarity. Research shows contracts with financial stakes increase success rates from ~50% to 82.8% — and when money goes to a disliked cause upon failure, success reaches 87.1%.</p>
+
+  <div class="sub-head">Design Principles</div>
+
+  <div class="s-head-sub">Identify Your Specific Vulnerabilities</div>
+  <p class="body-p">Recognize what temptations or weak moments derail your progress. Create your pact during clear thinking — when you can objectively assess what will help versus harm. The most powerful commitment devices either remove temptation entirely, create barriers to undesired behavior, or add friction to bad choices.</p>
+
+  <!-- Diagram: Three Mechanisms -->
+  <figure style="margin:2rem 0">
+    <svg viewBox="0 0 640 162" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block" aria-label="Three commitment mechanisms: Remove Temptation, Create Barriers, Add Friction">
+      <!-- Col 1: Remove Temptation -->
+      <rect x="0" y="0" width="200" height="162" rx="6" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <rect x="82" y="22" width="36" height="28" rx="5" fill="#3525CD" opacity="0.1"/>
+      <rect x="84" y="24" width="32" height="24" rx="4" fill="#3525CD" opacity="0.75"/>
+      <line x1="84" y1="24" x2="116" y2="48" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="116" y1="24" x2="84" y2="48" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="100" y="74" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">REMOVE</text>
+      <text x="100" y="88" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">TEMPTATION</text>
+      <text x="100" y="110" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Delete the app.</text>
+      <text x="100" y="126" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Destroy the credit card.</text>
+      <text x="100" y="142" font-family="Inter, sans-serif" font-size="10" fill="#9ca3af" text-anchor="middle">The option disappears.</text>
+
+      <!-- Col 2: Create Barriers -->
+      <rect x="220" y="0" width="200" height="162" rx="6" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <rect x="314" y="22" width="12" height="30" rx="2" fill="#3525CD" opacity="0.8"/>
+      <rect x="330" y="22" width="12" height="30" rx="2" fill="#3525CD" opacity="0.8"/>
+      <rect x="302" y="30" width="52" height="5" rx="1" fill="#3525CD" opacity="0.22"/>
+      <rect x="302" y="40" width="52" height="5" rx="1" fill="#3525CD" opacity="0.22"/>
+      <text x="320" y="74" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">CREATE</text>
+      <text x="320" y="88" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">BARRIERS</text>
+      <text x="320" y="110" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Someone else holds</text>
+      <text x="320" y="126" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">the keys.</text>
+      <text x="320" y="142" font-family="Inter, sans-serif" font-size="10" fill="#9ca3af" text-anchor="middle">Slipping requires help.</text>
+
+      <!-- Col 3: Add Friction -->
+      <rect x="440" y="0" width="200" height="162" rx="6" fill="white" stroke="#e2ddd6" stroke-width="1"/>
+      <rect x="510" y="44" width="40" height="6" rx="1" fill="#F59E0B" opacity="0.8"/>
+      <rect x="518" y="33" width="32" height="6" rx="1" fill="#F59E0B" opacity="0.8"/>
+      <rect x="526" y="22" width="24" height="6" rx="1" fill="#F59E0B" opacity="0.8"/>
+      <line x1="506" y1="46" x2="506" y2="23" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="501,27 506,19 511,27" fill="#F59E0B" opacity="0.85"/>
+      <text x="540" y="74" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">ADD</text>
+      <text x="540" y="88" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="#1a1a24" text-anchor="middle" style="letter-spacing:0.07em">FRICTION</text>
+      <text x="540" y="110" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Financial penalties.</text>
+      <text x="540" y="126" font-family="Inter, sans-serif" font-size="10" fill="#4b5060" text-anchor="middle">Public accountability.</text>
+      <text x="540" y="142" font-family="Inter, sans-serif" font-size="10" fill="#9ca3af" text-anchor="middle">Bad choices cost more.</text>
+    </svg>
+    <figcaption style="font-size:0.72rem;color:#9ca3af;margin-top:0.6rem;text-align:center;letter-spacing:0.04em">The three structural approaches to making deviation harder than compliance</figcaption>
+  </figure>
+
+  <div class="s-head-sub">Add Meaningful Stakes</div>
+  <p class="body-p">Monetary contracts significantly boost success — having money at risk nearly doubles effectiveness compared to simple planning. Public accountability also works powerfully; making commitments with someone else increases success rates from 50% to 65%.</p>
+
+  <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="stat-cell">
+      <div class="stat-num">82.8%</div>
+      <div class="stat-lbl">Success with monetary penalties</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" style="color:var(--green)">87.1%</div>
+      <div class="stat-lbl">Success when pledging to an anti-charity on failure</div>
+    </div>
+  </div>
+
+  <div class="sub-head">Implementation Strategies</div>
+
+  <div class="callout c-concept">
+    <div class="callout-lbl">Key Concept — Make Deviation Harder Than Compliance</div>
+    <p>With a commitment device in place, avoiding your goal should require more effort than completing it. Delete the app. Have someone else hold the credit card. Schedule the appointment that creates the forcing function. <strong>The goal is to make the bad choice the effortful one.</strong></p>
+  </div>
+
+  <div class="callout c-note">
+    <div class="callout-lbl">Note — Temptation Bundling</div>
+    <p>Pair something enjoyable with something beneficial — only watching your favorite show while exercising, or only listening to podcasts while cooking healthy meals. This transforms goal pursuit from a burdensome obligation into a pleasurable experience.</p>
+  </div>
+
+  <div class="callout c-warn">
+    <div class="callout-lbl">Important — Use Structural Constraints</div>
+    <p>Build commitment into your environment or systems. Codified decision criteria that establish non-negotiable standards prevent exceptions during pressure moments. Pre-established protocols can prohibit certain actions until specific metrics are met.</p>
+  </div>
+
+  <hr class="sec-rule">
+
+  <div class="s-head">
+    <div class="s-head-num">2</div>
+    <h2>Ulysses Contracts in Psychiatric Treatment</h2>
+  </div>
+
+  <p class="body-lg">In psychiatric contexts, Ulysses contracts are advance directives created during periods of mental clarity that specify how patients wish to be treated during future episodes of incapacity or crisis.</p>
+
+  <div class="defn">
+    <div class="defn-term">Psychiatric Advance Directive</div>
+    <div class="defn-rule"></div>
+    <p>A legal document created by a patient while competent that specifies their treatment preferences for future periods of incapacity. In the Ulysses contract form, this may include consenting in advance to detention, restraint, or involuntary medication during a crisis episode.</p>
+  </div>
+
+  <p class="body-p">These contracts are primarily used for patients with severe chronic episodic mental illnesses — bipolar disorder, schizophrenia, addiction — where individuals experience predictable cycles of competence and crisis. The terms snap into effect when the patient, in the throes of decompensated illness, can no longer offer safe, cogent plans regarding their care.</p>
+
+  <div class="pull-q">
+    <div class="pull-q-text">"Authentic desires expressed in the contract are more autonomous than inauthentic desires expressed during crisis."</div>
+    <div class="pull-q-src">— PMC · Ulysses Contracts in Psychiatry</div>
+  </div>
+
+  <div class="callout c-crit">
+    <div class="callout-lbl">Ethical Controversy</div>
+    <p>Critics argue that enforcing paternalism in future situations when patients have changed their minds raises serious ethical concerns — particularly for patients with borderline personality disorder, who are generally considered decision-competent even during crises. The contracts authorize caregivers to override patient autonomy through detention, physical restraints, and forced medication.</p>
+  </div>
+
+  <div class="ch-summary">
+    <div class="summary-lbl">Chapter Summary</div>
+    <ul>
+      <li>Design pacts during moments of clarity, not in the middle of temptation</li>
+      <li>Financial stakes nearly double effectiveness — make the cost of failure real and painful</li>
+      <li>Anti-charity pledges outperform pro-charity pledges by ~6 percentage points</li>
+      <li>Make deviation structurally harder than compliance — remove the easy exit</li>
+      <li>Psychiatric advance directives apply the same logic to mental health crises, with significant ethical complexity</li>
+      <li>Hard commitments consistently outperform soft ones — intention alone is not a pact</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ END MATTER -->
+<div style="padding:3rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)">
+  <span>Bookit · Style X Prototype · Understanding Ulysses Pacts · 2026</span>
+  <a href="#" style="color:var(--ink-3);text-decoration:none">↑ Top</a>
+</div>
+
+</body>
+</html>

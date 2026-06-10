@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applyr — Technical Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f7f4ef;
+  --dark:  #0a0d18;
+  --accent: #005CE6;
+  --accent-dim: rgba(0,92,230,0.10);
+  --accent-mid: rgba(0,92,230,0.22);
+  --cyan:  #00BCD4;
+  --ink:   #1a1d2e;
+  --mid:   #5a6272;
+  --rule:  rgba(26,29,46,0.12);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #ccc9c0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── BOOK WRAPPER ── */
+.book {
+  max-width: 880px;
+  margin: 40px auto;
+  box-shadow: 0 10px 48px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.14);
+}
+
+/* ── PAGE BASE ── */
+.page {
+  background: var(--paper);
+  padding: 64px 76px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.page + .page { border-top: 1px solid rgba(0,0,0,0.07); }
+
+/* ── COVER ── */
+.cover {
+  background: var(--dark);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 540px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.cover-top {
+  padding: 52px 68px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.cover-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 20px;
+}
+.cover-title {
+  font-family: var(--font-display);
+  font-size: 58px; font-weight: 800;
+  line-height: 1.0; letter-spacing: -0.025em;
+  color: #ffffff; margin-bottom: 6px;
+}
+.cover-title span { color: var(--accent); }
+.cover-subtitle {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 500;
+  color: rgba(255,255,255,0.48); margin-top: 14px;
+}
+.cover-illus {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px 68px;
+}
+.cover-bottom {
+  padding: 18px 68px 40px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cover-meta {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+}
+.cover-version {
+  font-family: var(--font-mono);
+  font-size: 11px; color: var(--cyan);
+}
+
+/* ── TOC ── */
+.toc-title {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 36px;
+}
+.toc-entry {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.toc-num {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  color: var(--accent); padding-top: 2px;
+}
+.toc-chapter {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 700; color: var(--ink);
+}
+.toc-sub {
+  font-size: 12px; color: var(--mid); margin-top: 3px;
+  line-height: 1.5;
+}
+
+/* ── CHAPTER OPENER ── */
+.chapter-opener {
+  background: var(--dark);
+  padding: 72px 76px 60px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.ch-num {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 18px;
+}
+.ch-title {
+  font-family: var(--font-display);
+  font-size: 44px; font-weight: 800;
+  line-height: 1.08; letter-spacing: -0.022em;
+  color: #ffffff; margin-bottom: 22px;
+}
+.ch-title em { color: var(--cyan); font-style: normal; }
+.ch-lead {
+  font-family: var(--font-body);
+  font-size: 16px; line-height: 1.68;
+  color: rgba(255,255,255,0.62); max-width: 580px;
+}
+
+/* ── HEADINGS ── */
+.page h2 {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 52px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+}
+.page h2:first-child { margin-top: 0; }
+.page h3 {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin: 32px 0 10px;
+}
+.page p {
+  font-size: 15px; line-height: 1.74; color: var(--ink); margin-bottom: 14px;
+}
+.page p:last-child { margin-bottom: 0; }
+.page ul, .page ol { padding-left: 22px; margin-bottom: 14px; }
+.page li {
+  font-size: 14.5px; line-height: 1.68; color: var(--ink); margin-bottom: 6px;
+}
+.page strong { font-weight: 600; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
+
+/* ── CALLOUT ── */
+.callout {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-dim);
+  padding: 15px 20px;
+  margin: 22px 0;
+  border-radius: 0 6px 6px 0;
+}
+.callout-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 5px;
+}
+.callout p { font-size: 13.5px; line-height: 1.62; margin-bottom: 0; }
+.callout.warn  { border-left-color:#D97706; background:rgba(217,119,6,.09); }
+.callout.warn  .callout-label { color:#B45309; }
+.callout.crit  { border-left-color:#DC2626; background:rgba(220,38,38,.08); }
+.callout.crit  .callout-label { color:#DC2626; }
+.callout.ok    { border-left-color:#059669; background:rgba(5,150,105,.08); }
+.callout.ok    .callout-label { color:#059669; }
+
+/* ── PULL QUOTE ── */
+.pull-quote {
+  border-top: 3px solid var(--accent);
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0 18px;
+  margin: 36px 0;
+}
+.pull-quote p {
+  font-family: var(--font-display);
+  font-size: 19px; font-weight: 700; line-height: 1.45;
+  color: var(--ink); margin-bottom: 6px;
+}
+.pull-quote cite {
+  font-size: 12px; color: var(--mid); font-style: normal;
+  font-family: var(--font-body);
+}
+
+/* ── DEFINITION BOX ── */
+.def-box {
+  background: #edeae2;
+  border: 1px solid rgba(26,29,46,0.1);
+  border-radius: 8px;
+  padding: 22px 26px;
+  margin: 22px 0;
+}
+.def-term {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 7px;
+}
+.def-body {
+  font-size: 13.5px; line-height: 1.65; color: var(--ink);
+}
+
+/* ── STAT GRID ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin: 22px 0;
+  background: var(--rule);
+  border-radius: 8px; overflow: hidden;
+}
+.stat-grid.c2 { grid-template-columns: repeat(2,1fr); }
+.stat-grid.c4 { grid-template-columns: repeat(4,1fr); }
+.stat-grid.c5 { grid-template-columns: repeat(5,1fr); }
+.stat-cell {
+  background: var(--paper); padding: 20px 22px;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 34px; font-weight: 800;
+  color: var(--accent); line-height: 1; margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.stat-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid);
+}
+.stat-sub { font-size: 12px; color: var(--mid); margin-top: 4px; line-height: 1.4; }
+
+/* ── CHAPTER SUMMARY BOX ── */
+.ch-summary {
+  background: var(--dark);
+  padding: 36px 44px; margin-top: 52px; border-radius: 8px;
+  print-color-adjust: exact; -webkit-print-color-adjust: exact;
+}
+.ch-summary .sum-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 14px;
+}
+.ch-summary h3 {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 800;
+  color: #ffffff; margin-bottom: 14px;
+  letter-spacing: -0.01em; text-transform: none;
+}
+.ch-summary ul { list-style: none; padding: 0; }
+.ch-summary li {
+  font-size: 13.5px; line-height: 1.6;
+  color: rgba(255,255,255,0.68);
+  padding: 6px 0 6px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+}
+.ch-summary li::before {
+  content: '→'; position: absolute; left: 0;
+  color: var(--cyan); font-family: var(--font-display); font-weight: 700;
+}
+.ch-summary li:last-child { border-bottom: none; }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #0d1120;
+  border-radius: 8px; padding: 22px 26px; margin: 22px 0;
+  overflow-x: auto;
+}
+.code-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 12px;
+}
+.code-block pre {
+  font-family: var(--font-mono);
+  font-size: 12px; line-height: 1.65;
+  color: rgba(255,255,255,0.82); white-space: pre;
+}
+.c-cm { color: rgba(255,255,255,0.38); }
+.c-kw { color: #79c0ff; }
+.c-st { color: #a5d6ff; }
+.c-fn { color: #d2a8ff; }
+.c-nu { color: #f2cc60; }
+.c-cy { color: #56d364; }
+
+/* ── DECISION BOX ── */
+.decision {
+  border: 1.5px solid var(--accent);
+  border-radius: 10px; overflow: hidden; margin: 28px 0;
+}
+.decision-head {
+  background: var(--accent);
+  padding: 11px 22px;
+  display: flex; align-items: center; gap: 14px;
+}
+.d-num {
+  font-family: var(--font-mono);
+  font-size: 11px; color: rgba(255,255,255,0.65);
+}
+.d-title {
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 800; color: #ffffff;
+}
+.decision-body { padding: 18px 22px; background: var(--paper); }
+.d-why {
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 700;
+  color: var(--accent); margin-bottom: 5px; letter-spacing: 0.04em;
+}
+.decision-body p { font-size: 13.5px; line-height: 1.62; margin-bottom: 8px; }
+.decision-body p:last-child { margin-bottom: 0; }
+.d-trade {
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px; color: var(--mid); font-style: italic;
+  line-height: 1.55;
+}
+
+/* ── DATA TABLE ── */
+.data-table {
+  width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 13px;
+}
+.data-table th {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--mid); padding: 9px 13px;
+  border-bottom: 2px solid var(--accent); text-align: left;
+}
+.data-table td {
+  padding: 9px 13px; border-bottom: 1px solid var(--rule);
+  color: var(--ink); vertical-align: top; line-height: 1.52;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td.mono-cell {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--accent);
+}
+.badge {
+  display: inline-block; padding: 2px 7px; border-radius: 4px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.badge.crit    { background:rgba(220,38,38,.13); color:#dc2626; }
+.badge.high    { background:rgba(217,119,6,.13); color:#b45309; }
+.badge.med     { background:rgba(234,179,8,.13); color:#92400e; }
+.badge.low     { background:rgba(5,150,105,.13); color:#065f46; }
+.badge.done    { background:rgba(99,102,241,.13); color:#4338ca; }
+
+/* ── DIAGRAM CAPTION ── */
+.fig-cap {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 500; color: var(--mid);
+  text-align: center; margin-top: -4px; margin-bottom: 20px;
+  letter-spacing: 0.03em;
+}
+
+/* ── STACK CARDS ── */
+.stack-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 22px 0;
+}
+.stack-card {
+  background: #edeae2; border-radius: 8px;
+  padding: 15px 18px; border-left: 3px solid var(--accent);
+}
+.stack-tech {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 4px;
+}
+.stack-why { font-size: 12px; line-height: 1.52; color: var(--mid); }
+.stack-trade { font-family: var(--font-mono); font-size: 11px; color: var(--accent); margin-top: 5px; }
+
+/* ── DIVIDER ── */
+.rule-divider { width: 44px; height: 3px; background: var(--accent); margin: 36px 0; border-radius: 2px; }
+
+/* ── END MATTER ── */
+.endmatter {
+  background: var(--dark); padding: 68px 76px;
+  print-color-adjust: exact; -webkit-print-color-adjust: exact;
+}
+.end-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 22px;
+}
+.endmatter h2 {
+  font-family: var(--font-display);
+  font-size: 34px; font-weight: 800;
+  color: #ffffff; margin-bottom: 14px; letter-spacing: -0.02em;
+  border: none; padding: 0; margin-top: 0;
+}
+.endmatter p { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.58); margin-bottom: 14px; }
+.phase {
+  margin-top: 28px; padding: 22px 26px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px; border-left: 3px solid var(--cyan);
+}
+.phase-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 8px;
+}
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 800; color: #ffffff; margin-bottom: 10px;
+}
+.phase ul { list-style: none; padding: 0; }
+.phase li {
+  font-size: 13.5px; color: rgba(255,255,255,0.62);
+  padding: 4px 0 4px 16px; position: relative;
+}
+.phase li::before { content:'·'; position:absolute; left:4px; color:var(--cyan); font-weight:700; }
+
+@media print {
+  body { background: white; }
+  .book { margin: 0; box-shadow: none; max-width: 100%; }
+  .page { padding: 48px 60px; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+
+<!-- ══════════════════════════════════════════════════════ COVER ══ -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-label">Bookit · Technical Deep Dive Series</div>
+    <div class="cover-title"><span>Applyr</span></div>
+    <div class="cover-subtitle">A Curated Job Hunt Agent — Architecture, Decisions &amp; Craft · v5.17</div>
+  </div>
+
+  <div class="cover-illus">
+    <!-- Cover SVG: Job search pipeline funnel -->
+    <svg viewBox="0 0 680 220" style="width:100%;height:auto;display:block" aria-label="Job search pipeline: many postings funneled to tailored applications">
+      <defs>
+        <linearGradient id="funnel-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#005CE6" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#0091DA" stop-opacity="0.9"/>
+        </linearGradient>
+        <linearGradient id="doc-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0.07)"/>
+        </linearGradient>
+        <filter id="glow-blue">
+          <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ── RAW POSTINGS (left cluster) ── -->
+      <!-- 14 small posting cards, 3 columns -->
+      <!-- Col A -->
+      <rect x="18" y="24" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="22" y="30" width="28" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="22" y="36" width="20" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="22" y="40" width="24" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="18" y="62" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="22" y="68" width="32" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="22" y="74" width="18" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="22" y="78" width="26" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="18" y="100" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="22" y="106" width="24" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="22" y="112" width="30" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="22" y="116" width="16" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="18" y="138" width="52" height="30" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="22" y="144" width="20" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
+      <rect x="22" y="150" width="28" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
+
+      <rect x="18" y="176" width="52" height="30" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="22" y="182" width="26" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
+      <rect x="22" y="188" width="18" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
+
+      <!-- Col B -->
+      <rect x="80" y="14" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="84" y="20" width="30" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="84" y="26" width="22" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="80" y="52" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="84" y="58" width="26" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="84" y="64" width="32" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="80" y="90" width="52" height="30" rx="4" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="84" y="96" width="22" height="3" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="84" y="102" width="28" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="80" y="128" width="52" height="30" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="84" y="134" width="18" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
+
+      <rect x="80" y="166" width="52" height="30" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="84" y="172" width="24" height="3" rx="1" fill="rgba(255,255,255,0.2)"/>
+
+      <!-- Label: raw count -->
+      <text x="66" y="215" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="0.08em">50–100 JOBs</text>
+
+      <!-- ── FUNNEL SHAPE ── -->
+      <!-- Gate 1: Keyword filter -->
+      <polygon points="152,10 210,55 210,165 152,210" fill="rgba(0,92,230,0.18)" stroke="rgba(0,92,230,0.4)" stroke-width="1.5"/>
+      <!-- Gate label -->
+      <text x="181" y="100" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,0.55)" text-anchor="middle" letter-spacing="0.06em">KEYWORD</text>
+      <text x="181" y="113" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,0.55)" text-anchor="middle" letter-spacing="0.06em">GATE</text>
+      <text x="181" y="128" font-family="Space Grotesk, sans-serif" font-size="19" font-weight="800" fill="#005CE6" text-anchor="middle">70%</text>
+      <text x="181" y="141" font-family="Space Grotesk, sans-serif" font-size="8" font-weight="600" fill="rgba(255,255,255,0.35)" text-anchor="middle">FILTERED OUT</text>
+
+      <!-- Reject arrow up-right -->
+      <line x1="195" y1="55" x2="235" y2="22" stroke="rgba(220,38,38,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="242" y="19" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(220,38,38,0.7)" letter-spacing="0.06em">REJECT</text>
+
+      <!-- Gate 2: LLM scoring -->
+      <polygon points="218,55 270,80 270,140 218,165" fill="rgba(0,92,230,0.28)" stroke="rgba(0,92,230,0.5)" stroke-width="1.5"/>
+      <text x="244" y="104" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="0.06em">LLM</text>
+      <text x="244" y="116" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="0.06em">SCORE</text>
+
+      <!-- Reject arrow -->
+      <line x1="262" y1="80" x2="296" y2="62" stroke="rgba(220,38,38,0.45)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="300" y="59" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" fill="rgba(220,38,38,0.6)" letter-spacing="0.06em">REJECT</text>
+
+      <!-- Funnel label -->
+      <text x="244" y="215" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="0.08em">TWO-STAGE FILTER</text>
+
+      <!-- ── CONNECTOR ── -->
+      <line x1="278" y1="110" x2="330" y2="110" stroke="rgba(0,188,212,0.6)" stroke-width="2"/>
+      <polygon points="326,105 336,110 326,115" fill="rgba(0,188,212,0.6)"/>
+
+      <!-- ── TAILORED APPLICATIONS (right) ── -->
+      <!-- Three polished document cards -->
+      <!-- Card 1 (main, highlighted) -->
+      <rect x="340" y="54" width="76" height="96" rx="6" fill="rgba(0,92,230,0.22)" stroke="#005CE6" stroke-width="1.5" filter="url(#glow-blue)"/>
+      <rect x="350" y="66" width="44" height="5" rx="2" fill="rgba(255,255,255,0.6)"/>
+      <rect x="350" y="75" width="36" height="3" rx="1" fill="rgba(255,255,255,0.35)"/>
+      <rect x="350" y="82" width="52" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+      <rect x="350" y="87" width="48" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+      <rect x="350" y="92" width="40" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+      <rect x="350" y="100" width="52" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="350" y="105" width="44" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="350" y="110" width="36" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <!-- PDF badge -->
+      <rect x="350" y="120" width="28" height="14" rx="3" fill="#005CE6"/>
+      <text x="364" y="130" font-family="JetBrains Mono, monospace" font-size="8" font-weight="500" fill="white" text-anchor="middle">PDF</text>
+      <!-- Score badge -->
+      <rect x="384" y="120" width="22" height="14" rx="3" fill="rgba(0,188,212,0.3)" stroke="rgba(0,188,212,0.6)" stroke-width="1"/>
+      <text x="395" y="130" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="800" fill="#00BCD4" text-anchor="middle">86</text>
+
+      <!-- Card 2 (back left) -->
+      <rect x="430" y="72" width="68" height="86" rx="6" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+      <rect x="440" y="83" width="36" height="4" rx="1.5" fill="rgba(255,255,255,0.4)"/>
+      <rect x="440" y="91" width="48" height="2" rx="1" fill="rgba(255,255,255,0.18)"/>
+      <rect x="440" y="96" width="40" height="2" rx="1" fill="rgba(255,255,255,0.18)"/>
+      <rect x="440" y="101" width="44" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
+      <rect x="440" y="106" width="32" height="2" rx="1" fill="rgba(255,255,255,0.12)"/>
+      <rect x="440" y="116" width="24" height="12" rx="3" fill="rgba(0,92,230,0.4)"/>
+      <text x="452" y="125" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(255,255,255,0.8)" text-anchor="middle">PDF</text>
+
+      <!-- Card 3 (back right) -->
+      <rect x="508" y="82" width="66" height="80" rx="6" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+      <rect x="518" y="93" width="34" height="4" rx="1.5" fill="rgba(255,255,255,0.3)"/>
+      <rect x="518" y="101" width="44" height="2" rx="1" fill="rgba(255,255,255,0.14)"/>
+      <rect x="518" y="106" width="36" height="2" rx="1" fill="rgba(255,255,255,0.14)"/>
+      <rect x="518" y="111" width="40" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
+      <rect x="518" y="120" width="24" height="12" rx="3" fill="rgba(0,92,230,0.3)"/>
+      <text x="530" y="129" font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">PDF</text>
+
+      <!-- Label -->
+      <text x="454" y="215" font-family="Space Grotesk, sans-serif" font-size="10" font-weight="700" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="0.08em">TAILORED APPLICATIONS</text>
+
+      <!-- ── SCORE BADGE IN CENTER TOP ── -->
+      <text x="378" y="20" font-family="Space Grotesk, sans-serif" font-size="11" font-weight="700" fill="rgba(0,188,212,0.8)" text-anchor="middle" letter-spacing="0.12em">RESUME · COVER LETTER · CHEAT SHEET</text>
+    </svg>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-meta">Applyr · Jason Wayne · 2026</div>
+    <div class="cover-version">React 19 · Express · Python · SQLite · Playwright</div>
+  </div>
+</div><!-- /cover -->
+
+
+<!-- ══════════════════════════════════════════════════════════ TOC ══ -->
+<div class="page">
+  <div class="toc-title">Table of Contents</div>
+
+  <div class="toc-entry">
+    <div class="toc-num">01</div>
+    <div>
+      <div class="toc-chapter">The Mission</div>
+      <div class="toc-sub">What Applyr does, the problem it solves, origin story</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">02</div>
+    <div>
+      <div class="toc-chapter">Architecture &amp; Stack</div>
+      <div class="toc-sub">System diagram, technology decisions, folder structure</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">03</div>
+    <div>
+      <div class="toc-chapter">The Decision Ledger</div>
+      <div class="toc-sub">Seven architectural decisions — context, options, trade-offs</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">04</div>
+    <div>
+      <div class="toc-chapter">The Pipeline</div>
+      <div class="toc-sub">Scout engine, two-stage scoring, LLM integration, proof codes</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">05</div>
+    <div>
+      <div class="toc-chapter">Data &amp; State</div>
+      <div class="toc-sub">Schema design, data flow, materialized JSON pattern</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">06</div>
+    <div>
+      <div class="toc-chapter">Craft &amp; Debt</div>
+      <div class="toc-sub">Performance, security, anti-patterns, learnings</div>
+    </div>
+  </div>
+  <div class="toc-entry">
+    <div class="toc-num">——</div>
+    <div>
+      <div class="toc-chapter">Roadmap</div>
+      <div class="toc-sub">Three-phase refactoring plan and what to keep on a rebuild</div>
+    </div>
+  </div>
+</div><!-- /toc -->
+
+
+<!-- ══════════════════════════════════════════ CH 1 — THE MISSION ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 01</div>
+  <div class="ch-title">The <em>Mission</em></div>
+  <div class="ch-lead">Applyr eliminates the 80% of job search effort wasted on poor-fit roles and generic documents. A user with a configured profile goes from "scout triggered" to "PDF-ready tailored application" with zero manual effort per job.</div>
+</div>
+
+<div class="page">
+  <h2>What It Actually Does</h2>
+  <p>The core user flow is deceptively simple to describe and genuinely difficult to build: configure once, then let the machine find, score, and draft — repeatedly, for every role, without hallucinating credentials.</p>
+
+  <div class="stat-grid c4">
+    <div class="stat-cell">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Job Sources</div>
+      <div class="stat-sub">LinkedIn, BuiltIn, RemoteOK, Remotive, WWR, Himalayas, The Muse, Adzuna</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">70%</div>
+      <div class="stat-label">Jobs Filtered</div>
+      <div class="stat-sub">Eliminated before any LLM token is spent</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">~$0</div>
+      <div class="stat-label">Monthly Cost</div>
+      <div class="stat-sub">Under $0.15/mo on Gemini Flash free tier</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">5.17</div>
+      <div class="stat-label">Current Version</div>
+      <div class="stat-sub">Multi-month iterative build, v1 through v5.17</div>
+    </div>
+  </div>
+
+  <h3>The Six-Step Flow</h3>
+  <ol>
+    <li><strong>Configure</strong> — target role, blocklists, salary floor, and LLM API keys via settings UI</li>
+    <li><strong>Codify</strong> — paste full work history; system auto-assigns stable proof codes (<span class="mono">ACC-101</span>, <span class="mono">VOC-01</span>, <span class="mono">MET-03</span>)</li>
+    <li><strong>Scout</strong> — headless browser + 7 API sources scrape new postings matching criteria</li>
+    <li><strong>Score</strong> — zero-token keyword gate first; LLM scoring only for jobs that pass</li>
+    <li><strong>Draft</strong> — qualifying roles get company research, tailored resume, cover letter, and interview cheat sheet compiled to PDF</li>
+    <li><strong>Track</strong> — WYSIWYG editor for final edits; 6-stage lifecycle from New to Closed</li>
+  </ol>
+
+  <h2>The Problem It Solves</h2>
+  <p>Job searching at scale requires applying to many roles with tailored documents. Both parts are painful: sourcing (finding relevant roles across many sites) and tailoring (customizing resumes without hallucinating credentials). Together they make high-volume quality search impractical by hand.</p>
+
+  <div class="pull-quote">
+    <p>"Commercial AI resume tools are subscription SaaS, send your career data to their servers, and don't integrate scouting with drafting into one pipeline."</p>
+    <cite>— Project Deep Dive, Part 1.2</cite>
+  </div>
+
+  <h3>Target User</h3>
+  <p>A mid-career technical individual contributor actively job searching who: (a) has a strong but nuanced work history that doesn't translate well to generic templates, (b) is comfortable running a local dev environment, (c) applies to 10–30 roles per month and wants each one properly tailored.</p>
+
+  <h2>Origin Story</h2>
+  <p>Started as a LinkedIn scraper — simple Playwright automation to collect job posts matching a specific role. Scope expanded significantly through versioned change requests. The scouting layer grew from 1 source to 8. Scoring was added when raw scraping produced too much noise. Drafting came when scoring identified good roles but manual tailoring remained the bottleneck. The UI arrived when managing everything via CLI became unwieldy.</p>
+
+  <h3>Key Pivots</h3>
+  <ul>
+    <li><strong>CR-001</strong> — Playwright-only scraping → hybrid pipeline (APIs + Playwright)</li>
+    <li><strong>CR-003</strong> — Four disconnected preference UIs → one materialized JSON pipeline (ADR-005)</li>
+    <li><strong>CR-005</strong> — <span class="mono">.env</span> key management → SQLite + UI (security concern: accidental git commits)</li>
+    <li><strong>CR-006</strong> — Single LLM provider → fallback chain after recognizing silent failures from outages</li>
+  </ul>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 01 — Key Points</div>
+    <h3>The Mission</h3>
+    <ul>
+      <li>Applyr automates discovery, scoring, and document drafting for job searches</li>
+      <li>Local-only by design — all career data stays on disk, never sent to a third-party platform</li>
+      <li>The proof code system is the founding differentiator — structural anti-hallucination, not a prompt suggestion</li>
+      <li>Every major subsystem was added in response to a real bottleneck, not speculative architecture</li>
+    </ul>
+  </div>
+</div><!-- /ch1 -->
+
+
+<!-- ═════════════════════════════════ CH 2 — ARCHITECTURE & STACK ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 02</div>
+  <div class="ch-title">Architecture<br>&amp; <em>Stack</em></div>
+  <div class="ch-lead">Five major components across two languages, three runtimes, and a file system used as a message queue. The architecture was shaped by a privacy constraint, a single-user assumption, and the fact that all the LLM code already existed in Python.</div>
+</div>
+
+<div class="page">
+  <h2>System Architecture</h2>
+  <p>The architecture is a hub-and-spoke model: Express at the center, spawning child processes for all heavy work. The frontend polls for state; the backend never pushes proactively.</p>
+
+  <!-- System Architecture SVG -->
+  <svg viewBox="0 0 716 380" style="width:100%;height:auto;display:block;margin:24px 0" aria-label="System architecture diagram">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#005CE6"/>
+      </marker>
+      <marker id="arr-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#5a6272"/>
+      </marker>
+      <marker id="arr-cyan" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L8,3 z" fill="#00BCD4"/>
+      </marker>
+    </defs>
+
+    <!-- ── ROW 1: React App ── -->
+    <rect x="248" y="10" width="220" height="52" rx="8" fill="#edeae2" stroke="#005CE6" stroke-width="1.5"/>
+    <text x="358" y="30" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="800" fill="#1a1d2e" text-anchor="middle">React App</text>
+    <text x="358" y="48" font-family="JetBrains Mono,monospace" font-size="10" fill="#5a6272" text-anchor="middle">localhost:5173</text>
+
+    <!-- Connector: HTTP/SSE -->
+    <line x1="358" y1="62" x2="358" y2="92" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)" marker-start="url(#arr)"/>
+    <rect x="286" y="70" width="144" height="16" rx="3" fill="white"/>
+    <text x="358" y="82" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="600" fill="#005CE6" text-anchor="middle" letter-spacing="0.04em">HTTP / SSE STREAMING</text>
+
+    <!-- ── ROW 2: Express Server ── -->
+    <rect x="208" y="92" width="300" height="52" rx="8" fill="#005CE6"/>
+    <text x="358" y="114" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="800" fill="white" text-anchor="middle">Express API Server</text>
+    <text x="358" y="132" font-family="JetBrains Mono,monospace" font-size="10" fill="rgba(255,255,255,0.7)" text-anchor="middle">server/index.ts  ·  localhost:3000</text>
+
+    <!-- Connector: better-sqlite3 -->
+    <line x1="358" y1="144" x2="358" y2="174" stroke="#5a6272" stroke-width="1.5" marker-end="url(#arr-gray)" marker-start="url(#arr-gray)"/>
+    <rect x="271" y="152" width="174" height="16" rx="3" fill="white"/>
+    <text x="358" y="164" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="600" fill="#5a6272" text-anchor="middle" letter-spacing="0.04em">better-sqlite3 (SYNCHRONOUS)</text>
+
+    <!-- ── ROW 3: SQLite ── -->
+    <rect x="238" y="174" width="240" height="52" rx="8" fill="#edeae2" stroke="#5a6272" stroke-width="1.5"/>
+    <text x="358" y="196" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="800" fill="#1a1d2e" text-anchor="middle">SQLite Database</text>
+    <text x="358" y="214" font-family="JetBrains Mono,monospace" font-size="10" fill="#5a6272" text-anchor="middle">jobagent.sqlite  ·  5 tables</text>
+
+    <!-- Connector: spawn() — branches to 4 children -->
+    <line x1="358" y1="226" x2="358" y2="248" stroke="#5a6272" stroke-width="1.5"/>
+    <rect x="304" y="236" width="108" height="14" rx="3" fill="white"/>
+    <text x="358" y="247" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="600" fill="#5a6272" text-anchor="middle" letter-spacing="0.04em">spawn() child_process</text>
+
+    <!-- Horizontal branch line -->
+    <line x1="90" y1="248" x2="628" y2="248" stroke="#5a6272" stroke-width="1.5"/>
+
+    <!-- Drops to 4 boxes -->
+    <line x1="130" y1="248" x2="130" y2="268" stroke="#5a6272" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+    <line x1="280" y1="248" x2="280" y2="268" stroke="#5a6272" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+    <line x1="438" y1="248" x2="438" y2="268" stroke="#5a6272" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+    <line x1="590" y1="248" x2="590" y2="268" stroke="#5a6272" stroke-width="1.5" marker-end="url(#arr-gray)"/>
+
+    <!-- ── ROW 4: Child Processes ── -->
+    <!-- Scout -->
+    <rect x="60" y="268" width="140" height="52" rx="7" fill="#edeae2" stroke="#005CE6" stroke-width="1.2"/>
+    <text x="130" y="290" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#005CE6" text-anchor="middle">TypeScript Scout</text>
+    <text x="130" y="307" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#5a6272" text-anchor="middle">scout_local.ts</text>
+
+    <!-- Scraper -->
+    <rect x="210" y="268" width="140" height="52" rx="7" fill="#edeae2" stroke="#5a6272" stroke-width="1.2"/>
+    <text x="280" y="290" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#5a6272" text-anchor="middle">TS Scraper</text>
+    <text x="280" y="307" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#5a6272" text-anchor="middle">scrape_new_jobs.ts</text>
+
+    <!-- Python Pipeline -->
+    <rect x="360" y="268" width="156" height="52" rx="7" fill="#edeae2" stroke="#005CE6" stroke-width="1.2"/>
+    <text x="438" y="290" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#005CE6" text-anchor="middle">Python Pipeline</text>
+    <text x="438" y="307" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#5a6272" text-anchor="middle">batch_pipeline.py</text>
+
+    <!-- PDF Compiler -->
+    <rect x="524" y="268" width="132" height="52" rx="7" fill="#edeae2" stroke="#5a6272" stroke-width="1.2"/>
+    <text x="590" y="290" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#5a6272" text-anchor="middle">Playwright PDF</text>
+    <text x="590" y="307" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#5a6272" text-anchor="middle">compile_single.py</text>
+
+    <!-- Scout → 7 sources -->
+    <line x1="130" y1="320" x2="130" y2="340" stroke="#005CE6" stroke-width="1.2" marker-end="url(#arr)"/>
+    <rect x="50" y="340" width="160" height="32" rx="5" fill="rgba(0,92,230,0.08)" stroke="rgba(0,92,230,0.3)" stroke-width="1"/>
+    <text x="130" y="353" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#005CE6" text-anchor="middle">7 Job Sources</text>
+    <text x="130" y="366" font-family="Space Grotesk,sans-serif" font-size="9" fill="#5a6272" text-anchor="middle">LinkedIn · RemoteOK · Himalayas · +4</text>
+
+    <!-- Python → LLM APIs -->
+    <line x1="438" y1="320" x2="438" y2="340" stroke="#005CE6" stroke-width="1.2" marker-end="url(#arr)"/>
+    <rect x="366" y="340" width="144" height="32" rx="5" fill="rgba(0,92,230,0.08)" stroke="rgba(0,92,230,0.3)" stroke-width="1"/>
+    <text x="438" y="353" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#005CE6" text-anchor="middle">LLM APIs</text>
+    <text x="438" y="366" font-family="Space Grotesk,sans-serif" font-size="9" fill="#5a6272" text-anchor="middle">Gemini · Claude · Perplexity</text>
+  </svg>
+  <div class="fig-cap">Fig 1 — System architecture: Express hub, SQLite state, four spawned child processes</div>
+
+  <div class="callout">
+    <div class="callout-label">Key Design Insight</div>
+    <p>The server never awaits Python processes — they run as detached child processes writing progress to stdout. The frontend polls <span class="mono">GET /api/logs</span> every 5 seconds, accepting up to 5 seconds of lag in exchange for zero WebSocket complexity.</p>
+  </div>
+
+  <h2>Technology Stack</h2>
+  <p>Every technology choice was shaped by the same two constraints: privacy (local-only, no cloud) and velocity (the developer is also the user). The trade-offs are documented honestly.</p>
+
+  <div class="stack-grid">
+    <div class="stack-card">
+      <div class="stack-tech">React 19 + Vite</div>
+      <div class="stack-why">Familiar component model, instant HMR, handles TS/React out of the box. Client-side only SPA — no SSR needed for localhost.</div>
+      <div class="stack-trade">↳ No SSR, no SEO, localhost-only</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-tech">SQLite + better-sqlite3</div>
+      <div class="stack-why">Zero ops overhead. Synchronous API eliminates async/await boilerplate in Express handlers. The tipping point over PostgreSQL.</div>
+      <div class="stack-trade">↳ Single writer; no concurrent write safety</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-tech">Express</div>
+      <div class="stack-why">Minimal boilerplate. spawn() integration is straightforward. No framework overhead for a localhost API server.</div>
+      <div class="stack-trade">↳ Manual route management; no type safety on endpoints</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-tech">Python Pipeline</div>
+      <div class="stack-why">All LLM SDKs (google-generativeai, anthropic) have mature Python APIs. PDF compilation via Playwright Python is battle-tested.</div>
+      <div class="stack-trade">↳ Cross-language boundary adds spawn() overhead</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-tech">Playwright</div>
+      <div class="stack-why">Headless Chrome gives pixel-perfect PDFs from styled HTML. Also used for authenticated LinkedIn scraping with stealth plugin.</div>
+      <div class="stack-trade">↳ ~300MB Chromium install, slow cold start</div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-tech">TailwindCSS</div>
+      <div class="stack-why">Rapid UI prototyping without context-switching to separate CSS files. Accelerates solo development significantly.</div>
+      <div class="stack-trade">↳ Utility class sprawl in JSX, harder to read components</div>
+    </div>
+  </div>
+
+  <h2>Folder Structure</h2>
+  <div class="code-block">
+    <div class="code-label">Project Layout — Key Separation of Concerns</div>
+    <pre><span class="c-cy">server/</span>           <span class="c-cm">— Express server. NOT in src/ (Vite would try to bundle it)</span>
+  index.ts        <span class="c-cm">— Was 844 lines. Refactored May 2026 → 33 lines</span>
+  routes/         <span class="c-cm">— system, jobs, profile, pipeline (extracted from monolith)</span>
+  scout.ts        <span class="c-cm">— Scout orchestrator: chains all 4 sub-processes</span>
+  db.ts           <span class="c-cm">— SQLite init + logActivity. Schema-on-boot, idempotent.</span>
+  shared.ts       <span class="c-cm">— Path constants + buildPythonEnv() (de-duplicated)</span>
+
+<span class="c-cy">scripts/</span>          <span class="c-cm">— Python + TypeScript pipeline scripts</span>
+  batch_pipeline.py   <span class="c-cm">— Keyword gate → LLM scoring → asset drafting</span>
+  drafting_engine.py  <span class="c-cm">— Resume + cover letter generation</span>
+  utils.py            <span class="c-cm">— call_llm() fallback chain. The core LLM abstraction.</span>
+  scout_local.ts      <span class="c-cm">— 7 parallel API calls, INSERT OR IGNORE dedup</span>
+
+<span class="c-cy">src/</span>              <span class="c-cm">— React frontend (compiled by Vite for browser)</span>
+  App.tsx         <span class="c-cm">— Root router + 5-second job polling loop</span>
+  pages/          <span class="c-cm">— TodayView, AllJobsView, SettingsView, etc.</span>
+  components/     <span class="c-cm">— JobDetailPanel, DocumentEditor, etc.</span>
+
+<span class="c-cy">data/</span>             <span class="c-cm">— User data (gitignored)</span>
+  candidate_preferences.json  <span class="c-cm">— Materialized projection from SQLite</span>
+  workExperience.md           <span class="c-cm">— Source of truth for all LLM claims</span>
+  job_fit_engine.md           <span class="c-cm">— Scoring rules (prompt artifact masquerading as config)</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">Organizational Decision</div>
+    <p><strong>server/ is separate from src/</strong> to make the TypeScript compilation boundary clear. Vite compiles <span class="mono">src/</span> for the browser; <span class="mono">server/</span> is run directly with <span class="mono">tsx</span>. This means the server can use Node APIs freely without browser compatibility concerns.</p>
+  </div>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 02 — Key Points</div>
+    <h3>Architecture &amp; Stack</h3>
+    <ul>
+      <li>Express hub + spawned child processes. Python chosen because all LLM code already existed there.</li>
+      <li>better-sqlite3's synchronous API was the deciding factor over PostgreSQL — cleaner Express handlers</li>
+      <li>The file system (<span style="font-family:var(--font-mono);font-size:12px">jobs/</span> directory) is used as a message queue between scout and pipeline — emergent, not designed</li>
+      <li>server/index.ts grew to 844 lines; refactored May 2026 into route modules. Entry point is now 33 lines.</li>
+    </ul>
+  </div>
+</div><!-- /ch2 -->
+
+
+<!-- ═══════════════════════════════ CH 3 — THE DECISION LEDGER ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 03</div>
+  <div class="ch-title">The Decision<br><em>Ledger</em></div>
+  <div class="ch-lead">Seven architectural decisions — each documented with the context that forced the choice, the options that were considered, and the trade-offs accepted. Honest about what was vibe-coded and what was deliberate.</div>
+</div>
+
+<div class="page">
+  <h2>Seven Architectural Decisions</h2>
+  <p>The best architectural decisions are made under constraint. Every decision below was shaped by privacy, cost, skill, or velocity. None were made in a vacuum.</p>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #1</div>
+      <div class="d-title">Local-First Architecture</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>Privacy constraint was non-negotiable — the app stores a user's full work history, target companies, and job search strategy. Cloud would mean career intelligence on third-party servers. The developer's skill set aligned with web stack. Single user means zero multi-tenancy complexity. The target user can clone a repo and run <span class="mono">npm run dev</span>.</p>
+      <p><strong>Options considered:</strong> Cloud SaaS (Vercel + Supabase) — rejected for privacy and recurring cost. Electron app — rejected for heavy bundle and platform-specific build complexity.</p>
+      <div class="d-trade">Trade-off accepted: Non-technical users cannot use this. No mobile. No sharing. No multi-machine access. Revisit if project ever targets non-technical users.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #2</div>
+      <div class="d-title">SQLite Over PostgreSQL</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p><span class="mono">better-sqlite3</span>'s synchronous API was the tipping point. Express route handlers that do <span class="mono">db.prepare(...).run()</span> are cleaner than async <span class="mono">await pool.query(...)</span> chains. The single-user constraint meant write contention was never a concern.</p>
+      <p><strong>Options considered:</strong> PostgreSQL (requires running service, overkill for 1 user), JSON files (no querying, no atomic writes, race conditions with concurrent pipeline processes).</p>
+      <div class="d-trade">Trade-off accepted: Single writer, file-level locking. Revisit only if multiple users, write throughput &gt; ~100/second, or data volume &gt; ~50GB.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #3</div>
+      <div class="d-title">Python Pipeline as Separate Process</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>All the LLM and PDF logic already existed in Python. Rewriting in Node would have been a net regression. The spawn pattern gave "good enough" IPC for a single-user app — stdout capture provides real-time log streaming, no shared memory concerns.</p>
+      <p><strong>Options considered:</strong> Inline Node.js LLM calls (would require rewriting all Python scripts), FastAPI microservice (port management complexity, startup ordering).</p>
+      <div class="d-trade">Trade-off accepted: Stdout parsing is fragile (relies on [LOG], [FOUND] prefix conventions). No mid-run cancellation. Process exit code is the only reliable error signal.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #4</div>
+      <div class="d-title">Materialized JSON for Pipeline Config (ADR-005)</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>Clean separation of concerns. The JSON file is a cache/projection of SQLite state. The server owns the write path; Python owns the read path. No cross-language DB connection needed. Decoupled (Python doesn't know about SQLite), human-readable, and diffable for debugging.</p>
+      <p><strong>Options considered:</strong> CLI args (shell escaping nightmares on Windows with 10+ settings), Python reads SQLite directly (two concurrent connections, Python needs DB schema knowledge).</p>
+      <div class="d-trade">Trade-off accepted: Two sources of truth. Drift risk if server crashes mid-write. In practice: materialization is synchronous and immediately follows the SQLite write. Verdict: this pattern is correct for this architecture.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #5</div>
+      <div class="d-title">LLM Provider Fallback Chain (CR-006)</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>The pipeline runs unattended, often during hours when the user isn't watching. Silent recovery is more valuable than explicit failure in an unattended context. A rate limit at 2am should not kill an entire overnight scout run.</p>
+      <p><strong>Options considered:</strong> Single provider, hard fail (clear signal but kills unattended runs), user manually switches provider (requires user to notice the failure and intervene).</p>
+      <div class="d-trade">Trade-off accepted: A job might be scored by Gemini and a second by Claude in the same batch, producing inconsistent scoring. Logged but easy to miss. Revisit if audit trails of which provider scored which job become important.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #6</div>
+      <div class="d-title">Proof Code Anti-Hallucination System</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>The structural constraint is more reliable than a prompt constraint. LLMs reliably ignore "only use facts from this document" under token pressure. The proof code system structurally prevents hallucination — if no code exists, the claim cannot be made. This was the founding design decision that differentiates Applyr from "just call ChatGPT with my resume."</p>
+      <p><strong>Options considered:</strong> Post-generation verification (second LLM call, catching hallucinations after is harder than preventing them), strict prompt constraints (LLMs ignore this under token pressure).</p>
+      <div class="d-trade">Trade-off accepted: High setup cost. User must invest time codifying their experience before the pipeline produces useful output. No shortcut exists. The workExperience_summary.md auto-generation reduces ongoing maintenance but initial setup remains manual.</div>
+    </div>
+  </div>
+
+  <div class="decision">
+    <div class="decision-head">
+      <div class="d-num">Decision #7</div>
+      <div class="d-title">Two-Stage Scoring — Zero-Token Gate + LLM</div>
+    </div>
+    <div class="decision-body">
+      <div class="d-why">Why This Won</div>
+      <p>Cost constraint. Gemini Flash free tier has limits. Burning them on obvious rejects is wasteful. Real-world results: ~70% of jobs are gated out before any LLM call. Token cost is roughly proportional to signal quality — only interesting jobs get the expensive treatment.</p>
+      <p><strong>Options considered:</strong> LLM for everything (most accurate, ~50 calls per run), zero-token gate only (free and instant, but misses nuance like a growth-PM role titled "Product Manager").</p>
+      <div class="d-trade">Trade-off accepted: False negative risk at the gate layer. Mitigated by keeping the gate broad (keyword presence, not match score) and truncating JDs at 1500 chars rather than rejecting on length.</div>
+    </div>
+  </div>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 03 — Key Points</div>
+    <h3>The Decision Ledger</h3>
+    <ul>
+      <li>Local-first was non-negotiable — privacy constraint drove the entire architecture</li>
+      <li>SQLite won on API ergonomics (synchronous better-sqlite3) not just simplicity</li>
+      <li>Decisions #4 and #6 (materialized JSON, fallback chain) were explicitly designed — not vibe-coded</li>
+      <li>Decision #6 (proof codes) is the core IP of Applyr — structural anti-hallucination beats prompt engineering</li>
+      <li>Decision #7 (two-stage scoring) was cost-driven: spend tokens proportional to signal strength</li>
+    </ul>
+  </div>
+</div><!-- /ch3 -->
+
+
+<!-- ══════════════════════════════════════ CH 4 — THE PIPELINE ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 04</div>
+  <div class="ch-title">The <em>Pipeline</em></div>
+  <div class="ch-lead">From scout trigger to PDF delivery. Four chained child processes, a two-stage scoring funnel, five LLM use cases, and a proof code system that makes hallucination structurally impossible.</div>
+</div>
+
+<div class="page">
+  <h2>Scout Pipeline — End to End</h2>
+  <p>User clicks "Run Scout." Over the next 5–20 minutes, the system discovers new job postings from 7 sources, scores them, and generates application PDFs for qualifying roles. The user sees live log output in a terminal-style view.</p>
+
+  <!-- Two-Stage Scoring SVG -->
+  <svg viewBox="0 0 716 230" style="width:100%;height:auto;display:block;margin:24px 0" aria-label="Two-stage scoring pipeline">
+    <defs>
+      <linearGradient id="funnel2" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#005CE6" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#005CE6" stop-opacity="0.35"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Stage labels at top -->
+    <text x="80" y="18" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#5a6272" text-anchor="middle" letter-spacing="0.1em">RAW INPUT</text>
+    <text x="258" y="18" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#5a6272" text-anchor="middle" letter-spacing="0.1em">STAGE 1</text>
+    <text x="450" y="18" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#5a6272" text-anchor="middle" letter-spacing="0.1em">STAGE 2</text>
+    <text x="636" y="18" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#5a6272" text-anchor="middle" letter-spacing="0.1em">OUTPUT</text>
+
+    <!-- Box 1: Raw JDs -->
+    <rect x="20" y="30" width="120" height="80" rx="8" fill="#edeae2" stroke="#5a6272" stroke-width="1.5"/>
+    <text x="80" y="60" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="800" fill="#1a1d2e" text-anchor="middle">50–100</text>
+    <text x="80" y="78" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="700" fill="#5a6272" text-anchor="middle">Raw JDs</text>
+    <text x="80" y="97" font-family="Space Grotesk,sans-serif" font-size="10" fill="#5a6272" text-anchor="middle">per batch run</text>
+
+    <!-- Arrow 1 -->
+    <line x1="140" y1="70" x2="178" y2="70" stroke="#005CE6" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Box 2: Keyword Gate -->
+    <rect x="180" y="30" width="156" height="80" rx="8" fill="#005CE6"/>
+    <text x="258" y="58" font-family="Space Grotesk,sans-serif" font-size="12" font-weight="800" fill="white" text-anchor="middle">Keyword Gate</text>
+    <text x="258" y="74" font-family="Space Grotesk,sans-serif" font-size="10" fill="rgba(255,255,255,0.75)" text-anchor="middle">passes_jd_keyword_gate()</text>
+    <text x="258" y="90" font-family="JetBrains Mono,sans-serif" font-size="10" fill="rgba(255,255,255,0.65)" text-anchor="middle">zero tokens · zero cost</text>
+
+    <!-- Reject arrow (up) -->
+    <line x1="258" y1="30" x2="258" y2="14" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-gray)"/>
+    <rect x="190" y="0" width="136" height="14" rx="3" fill="rgba(220,38,38,0.1)"/>
+    <text x="258" y="11" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#DC2626" text-anchor="middle" letter-spacing="0.06em">~70% REJECTED (no LLM cost)</text>
+
+    <!-- Arrow 2 -->
+    <line x1="336" y1="70" x2="374" y2="70" stroke="#005CE6" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- 30% label -->
+    <text x="355" y="64" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#005CE6" text-anchor="middle">30%</text>
+
+    <!-- Box 3: LLM Scoring -->
+    <rect x="376" y="30" width="148" height="80" rx="8" fill="#005CE6"/>
+    <text x="450" y="55" font-family="Space Grotesk,sans-serif" font-size="12" font-weight="800" fill="white" text-anchor="middle">LLM Scoring</text>
+    <text x="450" y="71" font-family="Space Grotesk,sans-serif" font-size="10" fill="rgba(255,255,255,0.75)" text-anchor="middle">evaluate_job_fit()</text>
+    <text x="450" y="87" font-family="JetBrains Mono,sans-serif" font-size="10" fill="rgba(255,255,255,0.65)" text-anchor="middle">~$0.0003 / call</text>
+
+    <!-- Reject arrow (up) -->
+    <line x1="450" y1="30" x2="450" y2="14" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-gray)"/>
+    <rect x="374" y="0" width="152" height="14" rx="3" fill="rgba(220,38,38,0.1)"/>
+    <text x="450" y="11" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#DC2626" text-anchor="middle" letter-spacing="0.06em">~50–60% SCORE &lt; THRESHOLD</text>
+
+    <!-- Arrow 3 -->
+    <line x1="524" y1="70" x2="562" y2="70" stroke="#005CE6" stroke-width="2" marker-end="url(#arr)"/>
+
+    <!-- Box 4: Asset Drafting -->
+    <rect x="564" y="30" width="144" height="80" rx="8" fill="#edeae2" stroke="#005CE6" stroke-width="1.5"/>
+    <text x="636" y="58" font-family="Space Grotesk,sans-serif" font-size="12" font-weight="800" fill="#005CE6" text-anchor="middle">Asset Drafting</text>
+    <text x="636" y="74" font-family="Space Grotesk,sans-serif" font-size="10" fill="#5a6272" text-anchor="middle">Resume · Cover Letter</text>
+    <text x="636" y="90" font-family="Space Grotesk,sans-serif" font-size="10" fill="#5a6272" text-anchor="middle">Cheat Sheet · PDF</text>
+
+    <!-- Cost breakdown bar -->
+    <rect x="20" y="140" width="688" height="48" rx="8" fill="rgba(0,92,230,0.05)" stroke="rgba(0,92,230,0.15)" stroke-width="1"/>
+    <text x="28" y="158" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="#005CE6" letter-spacing="0.1em">COST PER BATCH RUN (50 JOBS · GEMINI FLASH)</text>
+    <text x="28" y="176" font-family="Space Grotesk,sans-serif" font-size="11" fill="#5a6272">Scoring: ~15 calls × $0.0003 = <tspan font-weight="700" fill="#005CE6">$0.0045</tspan>  ·  Drafting: ~5 jobs × $0.002 = <tspan font-weight="700" fill="#005CE6">$0.01</tspan>  ·  Total: <tspan font-weight="800" fill="#005CE6">~$0.015 / run</tspan>  ·  Monthly: <tspan font-weight="800" fill="#005CE6">&lt;$0.15</tspan></text>
+
+    <!-- Pipeline chain note -->
+    <text x="358" y="210" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="600" fill="#5a6272" text-anchor="middle">Pipeline chained via sequential on('close') callbacks in server/scout.ts — each stage completes before next begins</text>
+  </svg>
+  <div class="fig-cap">Fig 2 — Two-stage scoring funnel: keyword gate eliminates ~70% of jobs before any LLM token is spent</div>
+
+  <h2>Proof Code Anti-Hallucination System</h2>
+  <p>The founding differentiator. Every claim in <span class="mono">workExperience.md</span> gets a stable, employer-partitioned code. Generated documents must cite these codes. The LLM is structurally forbidden from inventing uncoded claims.</p>
+
+  <div class="stat-grid c4">
+    <div class="stat-cell">
+      <div class="stat-num">ACC</div>
+      <div class="stat-label">Accomplishment</div>
+      <div class="stat-sub">Bullet points in Section 5.N → range N×100+1</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">VOC</div>
+      <div class="stat-label">Vocabulary</div>
+      <div class="stat-sub">Tech stack, tools, methodologies (Section 3 table rows)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">MET</div>
+      <div class="stat-label">Metrics</div>
+      <div class="stat-sub">Quantified outcomes (Section 4 table rows)</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">RETIRED</div>
+      <div class="stat-label">Permanent Retire</div>
+      <div class="stat-sub"><span class="mono">[RETIRED-ACC-NNN]</span> — never re-assigned</div>
+    </div>
+  </div>
+
+  <div class="callout crit">
+    <div class="callout-label">Critical Failure Mode</div>
+    <p>If a user <strong>deletes</strong> a coded line instead of retiring it (<span class="mono">[RETIRED-ACC-101]</span>), future codification may re-assign that number to a different claim. This corrupts any existing document that cited the old code.</p>
+  </div>
+
+  <h2>LLM Integration — Five Use Cases</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Use Case</th>
+        <th>Model</th>
+        <th>Input Tokens</th>
+        <th>Cost / Call</th>
+        <th>When</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono-cell">Job Fit Scoring</td>
+        <td>Gemini Flash (primary)</td>
+        <td>~3,000–4,000</td>
+        <td>$0.0003</td>
+        <td>Batch, after keyword gate</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">Asset Drafting</td>
+        <td>User's primary provider</td>
+        <td>~8,000–15,000</td>
+        <td>$0.001–0.002</td>
+        <td>Per qualified job</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">Company Research</td>
+        <td>Perplexity sonar-pro (or Gemini with web grounding)</td>
+        <td>Varies</td>
+        <td>Varies</td>
+        <td>Before drafting</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">Experience Summary</td>
+        <td>User's primary provider</td>
+        <td>Full workExperience.md</td>
+        <td>~$0.001</td>
+        <td>Background on every save</td>
+      </tr>
+      <tr>
+        <td class="mono-cell">AI Rewrite</td>
+        <td>User's primary provider</td>
+        <td>Instruction + doc text</td>
+        <td>~$0.001</td>
+        <td>On-demand, user-triggered</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The Fallback Chain — Core Code</h3>
+  <div class="code-block">
+    <div class="code-label">scripts/utils.py — Provider fallback chain</div>
+    <pre><span class="c-kw">def</span> <span class="c-fn">_get_configured_providers</span>(settings: dict) -> list:
+    <span class="c-cm"># primaryProvider with backward compat for old 'provider' field</span>
+    primary = settings.get(<span class="c-st">'primaryProvider'</span>) or settings.get(<span class="c-st">'provider'</span>, <span class="c-st">'gemini'</span>)
+    fixed_order = [<span class="c-st">'gemini'</span>, <span class="c-st">'claude'</span>, <span class="c-st">'local'</span>, <span class="c-st">'perplexity'</span>]
+    ordered = [primary] + [p <span class="c-kw">for</span> p <span class="c-kw">in</span> fixed_order <span class="c-kw">if</span> p != primary]
+    <span class="c-kw">return</span> [p <span class="c-kw">for</span> p <span class="c-kw">in</span> ordered <span class="c-kw">if</span> _is_configured(p, settings)]
+
+<span class="c-kw">def</span> <span class="c-fn">call_llm</span>(...):
+    providers = _get_configured_providers(settings)
+    <span class="c-kw">for</span> i, provider <span class="c-kw">in</span> enumerate(providers):
+        result = <span class="c-kw">None</span>
+        <span class="c-kw">if</span> provider == <span class="c-st">'gemini'</span>:
+            result = _call_gemini(...)   <span class="c-cm"># Returns None on error, str on success</span>
+        <span class="c-kw">elif</span> provider == <span class="c-st">'claude'</span>:
+            result = _call_claude(...)   <span class="c-cm"># tools param intentionally omitted</span>
+        <span class="c-kw">if</span> result <span class="c-kw">is not None</span>:
+            <span class="c-kw">return</span> result                <span class="c-cm"># str result terminates the loop</span>
+        <span class="c-kw">if</span> i + <span class="c-nu">1</span> &lt; len(providers):
+            <span class="c-fn">print</span>(f<span class="c-st">"    [LLM] Falling back from {provider} to {providers[i+1]}..."</span>)
+    <span class="c-kw">return</span> <span class="c-st">""</span>  <span class="c-cm"># All providers failed — callers must handle empty string</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">Known Degradation on Fallback</div>
+    <p>The <span class="mono">tools=[{"google_search": {}}]</span> parameter used by company research is only valid for Gemini. When falling back to Claude or Local, the tools param is dropped. Company research quality degrades on fallback — no web grounding means potentially stale competitive intel.</p>
+  </div>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 04 — Key Points</div>
+    <h3>The Pipeline</h3>
+    <ul>
+      <li>Four sequentially chained child processes: Scout → Backfill → Scraper → Python Pipeline</li>
+      <li>70% of jobs are eliminated by the keyword gate before any LLM token is spent</li>
+      <li>Total batch cost: &lt;$0.015 per run at Gemini Flash rates — fits entirely within free tier</li>
+      <li>Proof codes make hallucination structurally impossible: no code = no claim</li>
+      <li>Fallback chain survives single-provider outages; trades consistency for resilience</li>
+    </ul>
+  </div>
+</div><!-- /ch4 -->
+
+
+<!-- ══════════════════════════════════════ CH 5 — DATA & STATE ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 05</div>
+  <div class="ch-title">Data &amp;<br><em>State</em></div>
+  <div class="ch-lead">Five SQLite tables, one materialized JSON file, and a directory used as an improvised message queue. The data model is honest about what was designed versus what emerged.</div>
+</div>
+
+<div class="page">
+  <h2>Core Schema</h2>
+  <p>The database is minimal by design. Single user, single writer, no joins beyond simple lookups. The interesting architectural decisions are in what was <em>not</em> normalized.</p>
+
+  <h3>The jobs Table</h3>
+  <div class="code-block">
+    <div class="code-label">server/db.ts — jobs table (primary entity)</div>
+    <pre>id            TEXT PRIMARY KEY   <span class="c-cm">-- UUID. randomUUID() in server/index.ts:259</span>
+company       TEXT NOT NULL      <span class="c-cm">-- Denormalized. No companies table. Simpler queries.</span>
+title         TEXT NOT NULL      <span class="c-cm">-- As scraped</span>
+url           TEXT UNIQUE        <span class="c-cm">-- THE deduplication mechanism for the entire pipeline</span>
+score         INTEGER            <span class="c-cm">-- 0-100 fit score; NULL before evaluation</span>
+status        TEXT DEFAULT <span class="c-st">'Drafted'</span>  <span class="c-cm">-- 6-stage lifecycle</span>
+summary       TEXT               <span class="c-cm">-- One-line LLM summary</span>
+salary_range  TEXT               <span class="c-cm">-- Freeform. Avoids a parsing problem not worth solving.</span>
+source_site   TEXT               <span class="c-cm">-- LinkedIn / Himalayas / RemoteOK / etc.</span>
+rejection_stage TEXT             <span class="c-cm">-- At what stage was this closed</span>
+rejection_type  TEXT             <span class="c-cm">-- Rejected / Ghosted / Withdrew</span>
+interview_date  DATETIME         <span class="c-cm">-- Calendar awareness</span>
+created_at      DATETIME         <span class="c-cm">-- Auto-set on insert</span></pre>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">The URL UNIQUE Constraint</div>
+    <div class="def-body">The entire scout pipeline's deduplication strategy fits in one SQL constraint. <code>INSERT OR IGNORE</code> on URL means the same posting scraped twice creates no duplicate. The UNIQUE constraint does the work that would otherwise require application-level dedup logic — elegant and zero-overhead.</div>
+  </div>
+
+  <h3>The profiles Table — KV Store</h3>
+  <div class="code-block">
+    <div class="code-label">server/db.ts — profiles table (all user configuration)</div>
+    <pre>key   TEXT PRIMARY KEY  <span class="c-cm">-- 'identity' | 'llm_settings' | 'job_search' | 'api_connections'</span>
+value TEXT              <span class="c-cm">-- JSON-serialized blob. JSON.parse() at read time.</span>
+
+<span class="c-cm">-- Adding a new settings category = zero schema migration, just a new key.</span>
+<span class="c-cm">-- Downside: no SQL-level validation of JSON structure.</span></pre>
+  </div>
+
+  <h3>The activity_log Table — Append-Only Event Log</h3>
+  <div class="code-block">
+    <div class="code-label">server/db.ts — activity_log (the "Terminal" view data source)</div>
+    <pre>id        INTEGER PRIMARY KEY AUTOINCREMENT
+timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+level     TEXT NOT NULL   <span class="c-cm">-- INFO | WARN | ERROR</span>
+source    TEXT NOT NULL   <span class="c-cm">-- Scout | Pipeline | Scraper | System</span>
+message   TEXT NOT NULL
+meta      TEXT            <span class="c-cm">-- Optional JSON blob for structured data</span>
+
+<span class="c-cm">-- Pull model, not push. Frontend polls GET /api/logs every 5 seconds.</span>
+<span class="c-cm">-- Up to 5-second lag. Acceptable for a background process running over minutes.</span>
+<span class="c-cm">-- TECHNICAL DEBT: table never pruned. Will degrade query performance over months.</span></pre>
+  </div>
+
+  <h2>Data Flow — Settings to PDF</h2>
+
+  <!-- Data Flow SVG -->
+  <svg viewBox="0 0 716 148" style="width:100%;height:auto;display:block;margin:24px 0" aria-label="Data flow from user settings to generated PDFs">
+
+    <!-- Node 1: Settings UI -->
+    <rect x="10" y="40" width="104" height="48" rx="7" fill="#edeae2" stroke="#005CE6" stroke-width="1.5"/>
+    <text x="62" y="59" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#005CE6" text-anchor="middle">Settings UI</text>
+    <text x="62" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a6272" text-anchor="middle">React component</text>
+
+    <!-- Arrow 1 -->
+    <line x1="114" y1="64" x2="136" y2="64" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="125" y="57" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="600" fill="#5a6272" text-anchor="middle">POST</text>
+
+    <!-- Node 2: SQLite -->
+    <rect x="138" y="40" width="100" height="48" rx="7" fill="#edeae2" stroke="#5a6272" stroke-width="1.5"/>
+    <text x="188" y="59" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#1a1d2e" text-anchor="middle">SQLite</text>
+    <text x="188" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a6272" text-anchor="middle">profiles table</text>
+
+    <!-- Arrow 2 -->
+    <line x1="238" y1="64" x2="260" y2="64" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="249" y="57" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="600" fill="#5a6272" text-anchor="middle">project</text>
+
+    <!-- Node 3: JSON File -->
+    <rect x="262" y="40" width="108" height="48" rx="7" fill="#005CE6"/>
+    <text x="316" y="59" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="white" text-anchor="middle">JSON File</text>
+    <text x="316" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.7)" text-anchor="middle">candidate_prefs.json</text>
+
+    <!-- Arrow 3 -->
+    <line x1="370" y1="64" x2="392" y2="64" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="381" y="57" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="600" fill="#5a6272" text-anchor="middle">reads</text>
+
+    <!-- Node 4: Scout -->
+    <rect x="394" y="40" width="96" height="48" rx="7" fill="#edeae2" stroke="#5a6272" stroke-width="1.5"/>
+    <text x="442" y="59" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#1a1d2e" text-anchor="middle">Scout</text>
+    <text x="442" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a6272" text-anchor="middle">scout_local.ts</text>
+
+    <!-- Arrow 4 -->
+    <line x1="490" y1="64" x2="512" y2="64" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="501" y="57" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="600" fill="#5a6272" text-anchor="middle">writes</text>
+
+    <!-- Node 5: Python Pipeline -->
+    <rect x="514" y="40" width="104" height="48" rx="7" fill="#005CE6"/>
+    <text x="566" y="59" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="white" text-anchor="middle">Pipeline</text>
+    <text x="566" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.7)" text-anchor="middle">batch_pipeline.py</text>
+
+    <!-- Arrow 5 -->
+    <line x1="618" y1="64" x2="640" y2="64" stroke="#005CE6" stroke-width="1.5" marker-end="url(#arr)"/>
+    <text x="629" y="57" font-family="Space Grotesk,sans-serif" font-size="8" font-weight="600" fill="#5a6272" text-anchor="middle">outputs</text>
+
+    <!-- Node 6: PDFs -->
+    <rect x="642" y="40" width="64" height="48" rx="7" fill="#edeae2" stroke="#005CE6" stroke-width="1.5"/>
+    <text x="674" y="62" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="800" fill="#005CE6" text-anchor="middle">PDFs</text>
+    <text x="674" y="78" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a6272" text-anchor="middle">submissions/</text>
+
+    <!-- ADR-005 callout -->
+    <rect x="248" y="106" width="136" height="34" rx="5" fill="rgba(0,92,230,0.08)" stroke="rgba(0,92,230,0.3)" stroke-width="1"/>
+    <line x1="316" y1="88" x2="316" y2="106" stroke="rgba(0,92,230,0.4)" stroke-width="1.2" stroke-dasharray="3,3"/>
+    <text x="316" y="120" font-family="Space Grotesk,sans-serif" font-size="9" font-weight="700" fill="#005CE6" text-anchor="middle">ADR-005 PATTERN</text>
+    <text x="316" y="134" font-family="Space Grotesk,sans-serif" font-size="8.5" fill="#5a6272" text-anchor="middle">SQLite → JSON projection</text>
+  </svg>
+  <div class="fig-cap">Fig 3 — Data flow: settings materialize to JSON, Python consumes JSON, never touches SQLite</div>
+
+  <h2>Schema Evolution — Honest Assessment</h2>
+
+  <div class="callout crit">
+    <div class="callout-label">Technical Debt — Critical</div>
+    <p><strong>No migration system.</strong> The schema uses <span class="mono">CREATE TABLE IF NOT EXISTS</span> which is idempotent but doesn't handle column additions. New columns require manual <span class="mono">ALTER TABLE</span> or deleting the database entirely (losing all job history). This is acceptable for a solo-dev app; it's a hard blocker for any public distribution.</p>
+  </div>
+
+  <h3>What Data Is Lost on Server Restart</h3>
+  <ul>
+    <li><strong>Pipeline running status</strong> — resets to <span class="mono">idle</span> on restart. Pipeline process may still be running as a detached child; UI loses visibility but jobs still write to SQLite.</li>
+    <li><strong>SSE stream connections</strong> — ephemeral, not persisted. Client must reconnect.</li>
+    <li><strong>Draft SSE progress</strong> — if server restarts mid-pipeline, the user sees no log output, but new jobs will appear on the next polling cycle.</li>
+  </ul>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 05 — Key Points</div>
+    <h3>Data &amp; State</h3>
+    <ul>
+      <li><span class="mono" style="font-size:12px">url TEXT UNIQUE</span> is the entire deduplication strategy — one constraint, zero application code</li>
+      <li>KV store for profiles allows new settings categories with zero schema migrations</li>
+      <li>ADR-005 materialized JSON projection is the cleanest pattern in the codebase — copy it</li>
+      <li>No migration system is the most critical technical debt item; schema changes break existing installs</li>
+      <li><span class="mono" style="font-size:12px">activity_log</span> grows unboundedly — queries will degrade over a long job search (months of daily use)</li>
+    </ul>
+  </div>
+</div><!-- /ch5 -->
+
+
+<!-- ══════════════════════════════════════ CH 6 — CRAFT & DEBT ══ -->
+<div class="chapter-opener">
+  <div class="ch-num">Chapter 06</div>
+  <div class="ch-title">Craft &amp;<br><em>Debt</em></div>
+  <div class="ch-lead">Performance numbers, security surface, known anti-patterns, and the learnings worth carrying into future projects. Honest about what was vibe-coded and what was architected with intent.</div>
+</div>
+
+<div class="page">
+  <h2>Performance Characteristics</h2>
+
+  <div class="stat-grid">
+    <div class="stat-cell">
+      <div class="stat-num">5–20<span style="font-size:18px;font-weight:600">min</span></div>
+      <div class="stat-label">Scout Run Time</div>
+      <div class="stat-sub">Bottleneck: Playwright LinkedIn/BuiltIn — 10–30s per site cold start</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">3–8<span style="font-size:18px;font-weight:600">s</span></div>
+      <div class="stat-label">LLM Score / Job</div>
+      <div class="stat-sub">Gemini Flash. 15 calls ≈ 60–120 seconds for scoring phase</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">2–4<span style="font-size:18px;font-weight:600">s</span></div>
+      <div class="stat-label">PDF Compile / Doc</div>
+      <div class="stat-sub">Playwright headless Chromium. 3 docs per job = ~10s per qualified role</div>
+    </div>
+  </div>
+
+  <h3>What Was Optimized</h3>
+  <ul>
+    <li><strong><span class="mono">SCORING_JD_MAX_CHARS = 1500</span></strong> — Truncating JDs reduces input tokens 60–70% with minimal signal loss (requirements are front-loaded in most JDs)</li>
+    <li><strong><span class="mono">workExperience_summary.md</span> for scoring</strong> — Full file only on YES decision. Rejected jobs never see the full 5,000-word experience doc.</li>
+    <li><strong>Zero-token keyword gate</strong> — Eliminates LLM calls for obvious rejects. Calibrated to be broad, not precise.</li>
+  </ul>
+
+  <h3>What Was Intentionally Ignored</h3>
+  <ul>
+    <li>No caching of LLM responses — same company re-evaluated on every scout run</li>
+    <li>No parallel LLM calls — jobs processed sequentially in <span class="mono">batch_pipeline.py</span></li>
+    <li>No Playwright browser reuse — each spawn starts a fresh Chromium instance</li>
+  </ul>
+
+  <h2>Security Surface</h2>
+
+  <div class="callout ok">
+    <div class="callout-label">By Design — Acceptable</div>
+    <p><strong>No authentication, no CORS restriction, no HTTPS, no rate limiting.</strong> All are intentional trade-offs for a localhost-only single-user app. An attacker with local machine access has far worse attack surfaces available than this API.</p>
+  </div>
+
+  <h3>API Key Protection</h3>
+  <ul>
+    <li>Keys stored in SQLite <span class="mono">profiles</span> table — <span class="mono">jobagent.sqlite</span> is gitignored</li>
+    <li>Keys injected at spawn time as environment variables, never written to log files or API responses</li>
+    <li><span class="mono">.env</span> excluded from git and documented as optional fallback only</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-label">Unmitigated Risk — Prompt Injection</div>
+    <p>Job descriptions scraped from the web are injected directly into LLM scoring prompts. A malicious JD could contain prompt injection text. Partially mitigated by structured JSON output enforcement and low temperature (0.1). <strong>Not fully mitigated</strong> — a sophisticated injection could manipulate scoring output.</p>
+  </div>
+
+  <h2>Technical Debt Inventory</h2>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Item</th><th>Impact</th><th>Priority</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>No schema migration system</td>
+        <td>Schema changes break existing installs silently</td>
+        <td><span class="badge crit">Critical</span></td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td><span class="mono" style="font-size:11px">jobs/</span> directory never cleaned</td>
+        <td>Grows unboundedly; stale files re-processed</td>
+        <td><span class="badge high">High</span></td>
+        <td>Low (1–2 hrs)</td>
+      </tr>
+      <tr>
+        <td>No automated test suite</td>
+        <td>Regressions invisible; prompt changes silently degrade quality</td>
+        <td><span class="badge high">High</span></td>
+        <td>High (ongoing)</td>
+      </tr>
+      <tr>
+        <td><span class="mono" style="font-size:11px">activity_log</span> never pruned</td>
+        <td>Query performance degrades over months of use</td>
+        <td><span class="badge med">Medium</span></td>
+        <td>Low (add LIMIT + periodic DELETE)</td>
+      </tr>
+      <tr>
+        <td>Pipeline chaining via callbacks</td>
+        <td>No retry, no cancellation, 4-level callback pyramid</td>
+        <td><span class="badge med">Medium</span></td>
+        <td>High (requires queue system)</td>
+      </tr>
+      <tr>
+        <td><span class="mono" style="font-size:11px">scripts/scratch/</span> not gitignored</td>
+        <td>Debug scripts committed accidentally</td>
+        <td><span class="badge low">Low</span></td>
+        <td>Trivial</td>
+      </tr>
+      <tr>
+        <td><span class="mono" style="font-size:11px">server/index.ts</span> monolith</td>
+        <td>Was 844 lines — developer experience, merge conflicts</td>
+        <td><span class="badge done">Resolved</span></td>
+        <td>Refactored May 2026 → server/routes/</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Learnings Worth Keeping</h2>
+
+  <div class="pull-quote">
+    <p>"Structural constraints are more reliable than prompt constraints. If no code exists, the claim cannot be made — this is more reliable than 'only use facts from this document.'"</p>
+    <cite>— Learning extracted from the proof code system</cite>
+  </div>
+
+  <h3>Patterns Worth Reusing</h3>
+  <ul>
+    <li><strong>Materialized view pattern</strong> — Write to DB, project to a file that downstream consumers can read without DB knowledge. Clean separation, debuggable, diffable.</li>
+    <li><strong>Two-stage evaluation</strong> — Zero-cost gate first, expensive gate second. Applicable to any pipeline with a large input set and expensive evaluation.</li>
+    <li><strong>Proof code anti-hallucination</strong> — Structural constraints (cite a code or don't make the claim) beat prompt constraints universally.</li>
+    <li><strong><span class="mono">call_llm()</span> fallback chain</strong> — General-purpose pattern for any multi-provider LLM app. Return <span class="mono">None</span> to try next; return <span class="mono">str</span> (even empty) to stop.</li>
+  </ul>
+
+  <h3>Mistakes Not to Repeat</h3>
+  <ul>
+    <li><strong>Building a server monolith</strong> — The route boundary was always clear; it just took 844 lines of pain to enforce it. Extract route handlers from day one.</li>
+    <li><strong>Not designing IPC from the start</strong> — The <span class="mono">[LOG]/[FOUND]</span> stdout prefix convention was a hack that became load-bearing. Define a JSON streaming protocol at the start.</li>
+    <li><strong>Not adding migrations early</strong> — Schema changes are painful. SQLite <span class="mono">ALTER TABLE</span> is limited. Add a migration table before writing the first schema.</li>
+  </ul>
+
+  <h3>Abstraction Drift — Honest Assessment</h3>
+  <div class="def-box">
+    <div class="def-term">Thought vs. Reality Gap</div>
+    <div class="def-body">
+      <strong>"The settings UI manages all configuration"</strong> — Reality: <span class="mono">data/job_fit_engine.md</span> is a manually maintained prompt artifact that governs scoring. Changes to scoring criteria require editing this file directly. No UI exists for it. It's configuration, but it's really a prompt component that acts like code.
+      <br><br>
+      <strong>"The pipeline processes new jobs"</strong> — Reality: the <span class="mono">jobs/</span> directory accumulates <span class="mono">.txt</span> files from every scout run. Old files are never cleaned. If a company changes its listing (same URL, updated JD), the old text file persists and the pipeline scores using stale text.
+    </div>
+  </div>
+
+  <div class="ch-summary">
+    <div class="sum-label">Chapter 06 — Key Points</div>
+    <h3>Craft &amp; Debt</h3>
+    <ul>
+      <li>Performance is dominated by Playwright cold starts and LLM latency — both are network/compute, not code quality issues</li>
+      <li>The JD truncation at 1500 chars was empirically tuned: longer truncation improved recall &lt;5% while increasing cost ~40%</li>
+      <li>Security surface is intentionally minimal for localhost-only use; prompt injection is the one unmitigated real risk</li>
+      <li>The three patterns worth extracting: materialized view, two-stage evaluation, proof code anti-hallucination</li>
+      <li>The three mistakes: monolith server, informal IPC, no migrations — all avoidable with 1 day of upfront design</li>
+    </ul>
+  </div>
+</div><!-- /ch6 -->
+
+
+<!-- ══════════════════════════════════════════════ END MATTER ══ -->
+<div class="endmatter">
+  <div class="end-label">Roadmap</div>
+  <h2>Three Phases to Production-Grade</h2>
+  <p>The app works today. These phases represent what it would take to make it robust enough for distribution beyond a single technical user.</p>
+
+  <div class="phase">
+    <div class="phase-label">Phase 1 — Critical for Robustness</div>
+    <div class="phase-title">Foundation Fixes</div>
+    <ul>
+      <li>Add <span style="font-family:var(--font-mono);font-size:11px">ALTER TABLE</span> migration system before any further DB schema changes</li>
+      <li>Clean up <span style="font-family:var(--font-mono);font-size:11px">jobs/</span> directory after each pipeline run — delete processed files</li>
+      <li>Add <span style="font-family:var(--font-mono);font-size:11px">LIMIT</span> to <span style="font-family:var(--font-mono);font-size:11px">activity_log</span> queries; periodic DELETE for records older than 30 days</li>
+      <li>Replace stdout prefix parsing with newline-delimited JSON from Python scripts</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-label">Phase 2 — Important for Reliability</div>
+    <div class="phase-title">Pipeline Hardening</div>
+    <ul>
+      <li>Introduce a lightweight job queue for pipeline stages — even a SQLite-backed queue beats callback pyramids</li>
+      <li>Add per-job LLM call timeout to prevent a single slow call from blocking the entire batch</li>
+      <li>Add structured logging of token counts and provider used per LLM call</li>
+      <li>Playwright browser pool/reuse across scout stages — eliminate cold start overhead</li>
+    </ul>
+  </div>
+
+  <div class="phase">
+    <div class="phase-label">Phase 3 — Nice to Have</div>
+    <div class="phase-title">Developer Experience</div>
+    <ul>
+      <li>UI for <span style="font-family:var(--font-mono);font-size:11px">job_fit_engine.md</span> editing — scoring rules are currently invisible to non-technical users</li>
+      <li>Unit tests for codification engine; integration tests for pipeline stages</li>
+      <li>Structured error propagation from Python — typed error objects instead of stderr strings</li>
+    </ul>
+  </div>
+
+  <div style="margin-top:36px; padding-top:28px; border-top:1px solid rgba(255,255,255,0.1)">
+    <div class="phase-label">What to Keep on a Full Rebuild</div>
+    <p>SQLite for this use case — it's the right tool. The two-stage scoring architecture. The proof code anti-hallucination system. The materialized JSON projection pattern. The LLM fallback chain. These four patterns are the durable intellectual value of this codebase.</p>
+    <p>Start with a job queue. Define a JSON streaming protocol for Python → Node communication from day one. Extract route handlers into modules before the second route is written. Add a migration system before writing the first schema.</p>
+  </div>
+
+  <div style="margin-top:40px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:flex-end;">
+    <div>
+      <div class="phase-label">Generated</div>
+      <p style="margin:0; font-family:var(--font-mono); font-size:11px; color:rgba(255,255,255,0.35)">2026-05-09 · Applyr v5.17 · 20 of 20 parts analyzed</p>
+    </div>
+    <div style="text-align:right">
+      <div class="phase-label">Stack</div>
+      <p style="margin:0; font-family:var(--font-mono); font-size:11px; color:rgba(255,255,255,0.35)">React 19 · TypeScript · Express · Python 3.10+ · SQLite · Playwright</p>
+    </div>
+  </div>
+</div><!-- /endmatter -->
+
+</div><!-- /book -->
+</body>
+</html>
